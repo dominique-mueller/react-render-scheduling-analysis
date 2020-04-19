@@ -10,14 +10,15 @@
   "scripts": {
     "start": "react-scripts start",
     "start:build": "lite-server --baseDir=\"build\"",
-    "build": "react-scripts build",
+    "build": "react-scripts build --profile",
     "test": "react-scripts test --watchAll=false",
     "test:watch": "react-scripts test"
   },
   "dependencies": {
     "react": "16.13.x",
     "react-dom": "16.13.x",
-    "react-router-dom": "5.1.x"
+    "react-router-dom": "5.1.x",
+    "rxjs": "6.5.x"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "4.2.x",
