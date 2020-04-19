@@ -1,0 +1,52 @@
+{
+  "name": "react-scheduling-experiment",
+  "version": "1.0.0",
+  "description": "Using custom scheduling in React",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dominique-mueller/react-scheduling-experiment"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "start:build": "lite-server --baseDir=\"build\"",
+    "build": "react-scripts build",
+    "test": "react-scripts test --watchAll=false",
+    "test:watch": "react-scripts test"
+  },
+  "dependencies": {
+    "react": "16.13.x",
+    "react-dom": "16.13.x",
+    "react-router-dom": "5.1.x"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "4.2.x",
+    "@testing-library/react": "9.5.x",
+    "@testing-library/user-event": "10.0.x",
+    "@types/jest": "25.2.x",
+    "@types/node": "13.13.x",
+    "@types/react": "16.9.x",
+    "@types/react-dom": "16.9.x",
+    "@types/react-router-dom": "5.1.x",
+    "lite-server": "2.5.x",
+    "react-scripts": "3.4.x",
+    "ts-jest": "25.4.x",
+    "ts-node": "8.8.x",
+    "typescript": "3.8.x"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
