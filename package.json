@@ -15,8 +15,10 @@
     "test:watch": "react-scripts test"
   },
   "dependencies": {
+    "recharts": "1.8.x",
     "react": "16.13.x",
     "react-dom": "16.13.x",
+    "react-flame-graph": "1.4.x",
     "react-router-dom": "5.1.x",
     "rxjs": "6.5.x"
   },
@@ -26,6 +28,7 @@
     "@testing-library/user-event": "10.0.x",
     "@types/jest": "25.2.x",
     "@types/node": "13.13.x",
+    "@types/recharts": "1.8.x",
     "@types/react": "16.9.x",
     "@types/react-dom": "16.9.x",
     "@types/react-router-dom": "5.1.x",
