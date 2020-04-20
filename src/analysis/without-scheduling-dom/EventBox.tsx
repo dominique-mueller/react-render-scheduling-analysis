@@ -3,9 +3,7 @@ import React, { FunctionComponent, ReactElement, useEffect, useRef } from 'react
 import { Observable, Subscription } from 'rxjs';
 import { concatAll, filter } from 'rxjs/operators';
 
-import { useEventStream } from '../../shared/EventContext';
-import { useRenderScheduler } from '../../shared/RenderSchedulerContext';
-import { RenderScheduler } from '../../shared/RenderScheduler';
+import { useEvents } from '../../shared/events/EventsContext';
 
 /**
  * Event Box
@@ -14,11 +12,8 @@ const EventBox: FunctionComponent<{ id: number }> = ({ id }): ReactElement => {
   // DOM ref
   const boxRef = useRef<HTMLDivElement>(null);
 
-  // Render scheduler
-  const renderScheduler: RenderScheduler = useRenderScheduler();
-
   // Event stream
-  const eventStream: Observable<any> = useEventStream();
+  const eventStream: Observable<any> = useEvents();
   useEffect(() => {
     // Get latest event
     const subscription: Subscription = eventStream
@@ -29,18 +24,16 @@ const EventBox: FunctionComponent<{ id: number }> = ({ id }): ReactElement => {
         }),
       )
       .subscribe((event: any) => {
-        renderScheduler.scheduleTask(() => {
-          if (boxRef.current) {
-            boxRef.current.style.backgroundColor = event.color;
-          }
-        });
+        if (boxRef.current) {
+          boxRef.current.style.backgroundColor = event.color;
+        }
       });
 
     // Cleanup
     return () => {
       subscription.unsubscribe();
     };
-  }, [renderScheduler, eventStream, id]);
+  }, [eventStream, id]);
 
   // Render
   return <div ref={boxRef}>Event {id}</div>;

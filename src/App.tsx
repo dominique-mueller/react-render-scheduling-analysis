@@ -1,20 +1,22 @@
-import React, { ReactElement, FunctionComponent } from 'react';
+import React, { ReactElement, FunctionComponent, useRef } from 'react';
 
 import { Switch, Route, BrowserRouter as Router, NavLink } from 'react-router-dom';
 
-import { EventProvider } from './shared/EventContext';
-import WithoutSchedulingReact from './pages/without-scheduling-react/WithoutSchedulingReact';
-import WithoutSchedulingDom from './pages/without-scheduling-dom/WithoutSchedulingDom';
-import WithSchedulingReact from './pages/with-scheduling-react/WithSchedulingReact';
-import { RenderSchedulerProvider } from './shared/RenderSchedulerContext';
-import WithSchedulingDom from './pages/with-scheduling-dom/WithSchedulingDom';
+import { EventsProvider } from './shared/events/EventsContext';
+import AnalysisPage from './analysis/AnalysisPage';
+import EventBoxWithSchedulingUsingReact from './analysis/EventBoxWithSchedulingUsingReact';
+import { RenderSchedulerProvider } from './shared/render-scheduler/RenderSchedulerContext';
+import EventBoxWithoutSchedulingUsingReact from './analysis/EventBoxWithoutSchedulingUsingReact';
 
 /**
  * App
  */
 const App: FunctionComponent = (): ReactElement => {
+  const eventsWithoutSchedulingUsingReactProfilerResults = useRef<Array<any>>([]);
+  const eventsWithSchedulingUsingReactProfilerResults = useRef<Array<any>>([]);
+
   return (
-    <EventProvider>
+    <EventsProvider>
       <RenderSchedulerProvider>
         <Router>
           <div style={{ margin: '32px' }}>
@@ -25,32 +27,71 @@ const App: FunctionComponent = (): ReactElement => {
             <nav style={{ backgroundColor: '#EEE', padding: '12px' }}>
               <ul style={{ listStyleType: 'none', paddingLeft: '0', marginTop: '0', marginBottom: '0', display: 'flex' }}>
                 <li style={{ marginRight: '24px' }}>
-                  <NavLink to="/with-scheduling-react">With scheduling, using React</NavLink>
+                  <NavLink to="/events-without-scheduling-using-react">Without scheduling, using React</NavLink>
                 </li>
                 <li style={{ marginRight: '24px' }}>
+                  <NavLink to="/events-with-scheduling-using-react">With scheduling, using React</NavLink>
+                </li>
+                {/* <li style={{ marginRight: '24px' }}>
                   <NavLink to="/with-scheduling-dom">With scheduling, using DOM</NavLink>
-                </li>
-                <li style={{ marginRight: '24px' }}>
-                  <NavLink to="/without-scheduling-react">Without scheduling, using React</NavLink>
                 </li>
                 <li>
                   <NavLink to="/without-scheduling-dom">Without scheduling, using DOM</NavLink>
-                </li>
+                </li> */}
               </ul>
             </nav>
 
             <main style={{ marginTop: '48px' }}>
               <Switch>
-                <Route path="/with-scheduling-react" component={WithSchedulingReact} />
-                <Route path="/with-scheduling-dom" component={WithSchedulingDom} />
-                <Route path="/without-scheduling-react" component={WithoutSchedulingReact} />
-                <Route path="/without-scheduling-dom" component={WithoutSchedulingDom} />
+                {/* Events, without scheduling, using React */}
+                <Route
+                  path="/events-without-scheduling-using-react"
+                  render={() => {
+                    return (
+                      <AnalysisPage
+                        id="events-without-scheduling-using-react"
+                        title="Without scheduling, using React"
+                        render={(eventId: number) => {
+                          return <EventBoxWithoutSchedulingUsingReact eventId={eventId} />;
+                        }}
+                        complete={(profilerResults: Array<any>) => {
+                          eventsWithoutSchedulingUsingReactProfilerResults.current = profilerResults;
+                          console.info(eventsWithoutSchedulingUsingReactProfilerResults.current);
+                        }}
+                      />
+                    );
+                  }}
+                />
+
+                {/* Events, with scheduling, using React */}
+                <Route
+                  path="/events-with-scheduling-using-react"
+                  render={() => {
+                    return (
+                      <AnalysisPage
+                        id="events-with-scheduling-using-react"
+                        title="With scheduling, using React"
+                        render={(eventId: number) => {
+                          return <EventBoxWithSchedulingUsingReact eventId={eventId} />;
+                        }}
+                        complete={(profilerResults: Array<any>) => {
+                          eventsWithSchedulingUsingReactProfilerResults.current = profilerResults;
+                          console.info(eventsWithSchedulingUsingReactProfilerResults.current);
+                        }}
+                      />
+                    );
+                  }}
+                />
+
+                {/* <Route path="/with-scheduling-dom" component={WithSchedulingDom} /> */}
+
+                {/* <Route path="/without-scheduling-dom" component={WithoutSchedulingDom} /> */}
               </Switch>
             </main>
           </div>
         </Router>
       </RenderSchedulerProvider>
-    </EventProvider>
+    </EventsProvider>
   );
 };
 
