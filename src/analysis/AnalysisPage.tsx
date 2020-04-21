@@ -14,7 +14,6 @@ const AnalysisPage: FunctionComponent<{
   render: (eventId: number) => ReactElement;
   complete: (profilerResults: Array<any>) => unknown;
 }> = ({ id, title, render, complete }): ReactElement => {
-  console.log('ANALYSIS PAGE');
   // State
   const profilerResults = useRef<Array<any>>([]);
 
@@ -23,11 +22,11 @@ const AnalysisPage: FunctionComponent<{
     // Get latest event
     const subscription: Subscription = eventStream.subscribe({
       next: (): void => {
-        console.log('Processing events ...');
+        // console.log('Processing events ...');
       },
       complete: (): void => {
         complete(Object.assign([], profilerResults.current));
-        console.log('Completed.');
+        // console.log('Completed.');
       },
     });
 
@@ -51,20 +50,20 @@ const AnalysisPage: FunctionComponent<{
       timestamp: number;
     }>,
   ) => {
-    if (phase === 'update') {
-      profilerResults.current.push({
-        timestamp: Date.now(),
-        data: {
-          id,
-          phase,
-          actualDuration,
-          baseDuration,
-          startTime,
-          commitTime,
-          interactions,
-        },
-      });
+    if (phase !== 'update') {
+      return;
     }
+
+    profilerResults.current.push({
+      timestamp: new Date(),
+      id,
+      phase,
+      actualDuration,
+      baseDuration,
+      startTime,
+      commitTime,
+      interactions,
+    });
   };
 
   // Render
