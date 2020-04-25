@@ -2,6 +2,7 @@
  * Profiler result
  */
 export interface ProfilerResult extends ProfilerOutput {
+  run: number;
   timestamp: Date;
 }
 
@@ -11,15 +12,10 @@ export interface ProfilerResult extends ProfilerOutput {
  * Note: Based on the arguments of "ProfilerOnRenderCallback"
  */
 export interface ProfilerOutput {
-  id: string;
-  phase: 'mount' | 'update';
   actualDuration: number;
   baseDuration: number;
-  startTime: number;
   commitTime: number;
-  interactions: Set<{
-    id: number;
-    name: string;
-    timestamp: number;
-  }>;
+  id: string;
+  phase: 'mount' | 'update';
+  startTime: number;
 }

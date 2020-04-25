@@ -8,6 +8,7 @@ import { RenderSchedulerProvider } from './shared/render-scheduler/RenderSchedul
 import EventBoxWithoutSchedulingUsingReact from './analysis/EventBoxWithoutSchedulingUsingReact';
 import ProfilerLineChart from './profiler/ProfilerLineChart';
 import ProfilerFlameChart from './profiler/ProfilerFlameChart';
+import ProfilerStatistics from './profiler/ProfilerStatistics';
 
 /**
  * App
@@ -17,7 +18,7 @@ const App: FunctionComponent = (): ReactElement => {
 
   const complete = useCallback(
     (profilerResults: Array<any>) => {
-      console.log(profilerResults);
+      // console.log(profilerResults);
       setEventsWithoutSchedulingUsingReactProfilerResults(profilerResults);
     },
     [setEventsWithoutSchedulingUsingReactProfilerResults],
@@ -49,10 +50,11 @@ const App: FunctionComponent = (): ReactElement => {
             </nav>
             {eventsWithoutSchedulingUsingReactProfilerResults.length > 0 && (
               <>
-                <div style={{ width: 1500, height: 300 }}>
+                <div style={{ width: 1500, height: 200 }}>
                   <ProfilerLineChart profilerResults={eventsWithoutSchedulingUsingReactProfilerResults} />
                 </div>
                 <ProfilerFlameChart profilerResults={eventsWithoutSchedulingUsingReactProfilerResults} />
+                <ProfilerStatistics profilerResults={eventsWithoutSchedulingUsingReactProfilerResults} />
               </>
             )}
             <main style={{ marginTop: '48px' }}>
