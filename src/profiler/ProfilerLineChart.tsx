@@ -3,6 +3,7 @@ import React, { FunctionComponent, ReactElement } from 'react';
 import { AreaChart, XAxis, YAxis, CartesianGrid, Tooltip, Area, ResponsiveContainer } from 'recharts';
 
 import { ProfilerResult } from './Profiler.interfaces';
+import { getCompleteRenderDuration } from './utilities/getCompleteRenderDuration';
 
 /**
  * Profiler line chart tooltip
@@ -35,6 +36,7 @@ const ProfilerLineChart: FunctionComponent<{
       });
       return acc;
     },
+    // Start with x=0 so that the chart starts at the beginning
     [
       {
         run: profilerResults[0].run,
@@ -45,7 +47,6 @@ const ProfilerLineChart: FunctionComponent<{
   );
 
   // Define ticks
-  // TODO: Fix me when refactoring into data utilities, somehow only the first tick is correct but the others aren't.
   const ticks: Array<number> = data
     .reduce((acc: Array<any>, item: any) => {
       if (acc[item.run] === undefined) {
@@ -55,30 +56,16 @@ const ProfilerLineChart: FunctionComponent<{
       return acc;
     }, [])
     .map((dataByRun: Array<any>): number => {
-      return dataByRun[0].x;
+      return dataByRun[dataByRun.length - 1].x;
     });
 
   // Define tick formatter
-  const tickFormatter = (value: number): string => {
-    return `Run ${ticks.indexOf(value) + 1}`;
+  const tickFormatter = (): string => {
+    return '';
   };
 
-  // Define chart domains
-  // Calculate complete time
-  const completeTime: number = data.reduce((accumulatedTime: number, item: any): number => {
-    return accumulatedTime + item.value;
-  }, 0);
-  const xDomain: [number, number] = [0, completeTime];
-  // const yDomain: [number, number] = [
-  //   0,
-  //   Math.ceil(
-  //     Math.max(
-  //       ...data.map((item: any): number => {
-  //         return item.y;
-  //       }),
-  //     ),
-  //   ),
-  // ];
+  // Define chart domain
+  const xDomain: [number, number] = [0, getCompleteRenderDuration(profilerResults)];
 
   // Render
   return (
@@ -90,8 +77,8 @@ const ProfilerLineChart: FunctionComponent<{
           type="number"
           ticks={ticks}
           tickFormatter={tickFormatter}
-          tick={{ fontSize: '12px' }}
-          tickSize={12}
+          tick={{ fontSize: '0' }}
+          tickSize={0}
         />
         <YAxis dataKey="y" type="number" unit="ms" width={64} tick={{ fontSize: '12px' }} tickSize={12} />
         <CartesianGrid strokeDasharray="2 3" />
