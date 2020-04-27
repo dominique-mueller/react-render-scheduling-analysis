@@ -6,8 +6,12 @@ import { groupUpdatesByRender } from './groupUpdatesByRender';
  */
 export const getRenderDurations = (profilerResults: Array<ProfilerResult>): Array<number> => {
   return groupUpdatesByRender(profilerResults).map((profilerResultsForUpdate: Array<ProfilerResult>): number => {
-    return profilerResultsForUpdate.reduce((completeDuration: number, profilerResultForUpdate: ProfilerResult): number => {
-      return completeDuration + profilerResultForUpdate.actualDuration;
-    }, 0);
+    return (
+      Math.round(
+        profilerResultsForUpdate.reduce((completeDuration: number, profilerResultForUpdate: ProfilerResult): number => {
+          return completeDuration + profilerResultForUpdate.actualDuration;
+        }, 0) * 100,
+      ) / 100
+    );
   });
 };

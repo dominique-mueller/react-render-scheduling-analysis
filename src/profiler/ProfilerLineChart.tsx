@@ -14,7 +14,7 @@ const ProfilerLineChartTooltip: FunctionComponent<{
 }> = ({ active, payload }): ReactElement | null => {
   return active ? (
     <div style={{ backgroundColor: '#FFF', padding: '6px 8px', border: '1px solid #AAA', color: '#666', fontSize: '12px' }}>
-      Render time: {Math.round(payload[0].payload.y * 100) / 100}ms
+      Render time: {payload[0].payload.y}ms
     </div>
   ) : null;
 };
@@ -25,22 +25,6 @@ const ProfilerLineChartTooltip: FunctionComponent<{
 const ProfilerLineChart: FunctionComponent<{
   profilerResults: Array<ProfilerResult>;
 }> = ({ profilerResults }): ReactElement => {
-  // const runtimeData: Array<number> = profilerResults
-  //   .reduce((acc: Array<Array<ProfilerResult>>, item: ProfilerResult) => {
-  //     if (acc[item.run] === undefined) {
-  //       acc[item.run] = [];
-  //     }
-  //     acc[item.run].push(item);
-  //     return acc;
-  //   }, [])
-  //   .map((profilerResultsByRun: Array<ProfilerResult>): any => {
-  //     return (
-  //       profilerResultsByRun.reduce((acc: number, profilerResult: ProfilerResult): any => {
-  //         return acc + profilerResult.actualDuration;
-  //       }, 0) / profilerResultsByRun.length
-  //     );
-  //   });
-
   // Transform data into chart-compatible format
   const data: Array<any> = profilerResults.reduce(
     (acc: Array<any>, profilerResult: ProfilerResult, index: number): any => {

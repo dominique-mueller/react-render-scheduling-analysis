@@ -87,10 +87,10 @@ const AnalysisPage: FunctionComponent<{
       run: profilerResultsRender.current,
       id,
       phase,
-      actualDuration,
-      baseDuration,
-      startTime,
-      commitTime,
+      actualDuration: Math.round(actualDuration * 100) / 100,
+      baseDuration: Math.round(baseDuration * 100) / 100,
+      startTime: Math.round(startTime * 100) / 100,
+      commitTime: Math.round(commitTime * 100) / 100,
     });
   };
 

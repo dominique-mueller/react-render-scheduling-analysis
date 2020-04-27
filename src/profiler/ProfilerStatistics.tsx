@@ -91,7 +91,7 @@ const ProfilerStatistics: FunctionComponent<{
             fill: '#3182CE',
             fontWeight: 500,
             formatter: (label: number | string): string => {
-              return `${Math.round((label as number) * 100) / 100}ms`;
+              return `${label}ms`;
             },
           }}
         />
@@ -124,7 +124,7 @@ const ProfilerStatistics: FunctionComponent<{
             fill: '#3182CE',
             fontWeight: 500,
             formatter: (label: number | string): string => {
-              return `${Math.round((label as number) * 100) / 100}ms`;
+              return `${label}ms`;
             },
           }}
         />

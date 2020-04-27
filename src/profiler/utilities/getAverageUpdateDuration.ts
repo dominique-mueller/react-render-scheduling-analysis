@@ -5,8 +5,12 @@ import { ProfilerResult } from '../Profiler.interfaces';
  */
 export const getAverageUpdateDuration = (profilerResults: Array<ProfilerResult>): number => {
   return (
-    profilerResults.reduce((completeDuration: number, profilerResult: ProfilerResult): number => {
-      return completeDuration + profilerResult.actualDuration;
-    }, 0) / profilerResults.length
+    Math.round(
+      (profilerResults.reduce((completeDuration: number, profilerResult: ProfilerResult): number => {
+        return completeDuration + profilerResult.actualDuration;
+      }, 0) /
+        profilerResults.length) *
+        100,
+    ) / 100
   );
 };
