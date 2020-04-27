@@ -3,14 +3,14 @@ import React, { FunctionComponent, ReactElement, useEffect, useRef } from 'react
 import { Observable, Subscription } from 'rxjs';
 import { concatAll, filter } from 'rxjs/operators';
 
-import { useEvents } from '../../shared/events/EventsContext';
-import { useRenderScheduler } from '../../shared/render-scheduler/RenderSchedulerContext';
-import { RenderScheduler } from '../../shared/render-scheduler/RenderScheduler';
+import { useEvents } from '../shared/events/EventsContext';
+import { useRenderScheduler } from '../shared/render-scheduler/RenderSchedulerContext';
+import { RenderScheduler } from '../shared/render-scheduler/RenderScheduler';
 
 /**
- * Event Box
+ * Event Box, with scheduling, using DOM
  */
-const EventBox: FunctionComponent<{ id: number }> = ({ id }): ReactElement => {
+const EventBoxWithSchedulingUsingDom: FunctionComponent<{ eventId: number }> = ({ eventId: id }): ReactElement => {
   // DOM ref
   const boxRef = useRef<HTMLDivElement>(null);
 
@@ -46,4 +46,4 @@ const EventBox: FunctionComponent<{ id: number }> = ({ id }): ReactElement => {
   return <div ref={boxRef}>Event {id}</div>;
 };
 
-export default EventBox;
+export default EventBoxWithSchedulingUsingDom;

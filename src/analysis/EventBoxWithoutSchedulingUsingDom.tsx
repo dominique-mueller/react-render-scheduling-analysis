@@ -3,12 +3,12 @@ import React, { FunctionComponent, ReactElement, useEffect, useRef } from 'react
 import { Observable, Subscription } from 'rxjs';
 import { concatAll, filter } from 'rxjs/operators';
 
-import { useEvents } from '../../shared/events/EventsContext';
+import { useEvents } from '../shared/events/EventsContext';
 
 /**
- * Event Box
+ * Event Box, without scheduling, using DOM
  */
-const EventBox: FunctionComponent<{ id: number }> = ({ id }): ReactElement => {
+const EventBoxWithoutSchedulingUsingDom: FunctionComponent<{ eventId: number }> = ({ eventId: id }): ReactElement => {
   // DOM ref
   const boxRef = useRef<HTMLDivElement>(null);
 
@@ -39,4 +39,4 @@ const EventBox: FunctionComponent<{ id: number }> = ({ id }): ReactElement => {
   return <div ref={boxRef}>Event {id}</div>;
 };
 
-export default EventBox;
+export default EventBoxWithoutSchedulingUsingDom;

@@ -7,6 +7,8 @@ import AnalysisPage from './analysis/AnalysisPage';
 import { RenderSchedulerProvider } from './shared/render-scheduler/RenderSchedulerContext';
 import EventBoxWithoutSchedulingUsingReact from './analysis/EventBoxWithoutSchedulingUsingReact';
 import EventBoxWithSchedulingUsingReact from './analysis/EventBoxWithSchedulingUsingReact';
+import EventBoxWithoutSchedulingUsingDom from './analysis/EventBoxWithoutSchedulingUsingDom';
+import EventBoxWithSchedulingUsingDom from './analysis/EventBoxWithSchedulingUsingDom';
 
 /**
  * App
@@ -28,12 +30,12 @@ const App: FunctionComponent = (): ReactElement => {
                 <li style={{ marginRight: '24px' }}>
                   <NavLink to="/events-with-scheduling-using-react">With scheduling, using React</NavLink>
                 </li>
-                {/* <li style={{ marginRight: '24px' }}>
-                  <NavLink to="/with-scheduling-dom">With scheduling, using DOM</NavLink>
+                <li style={{ marginRight: '24px' }}>
+                  <NavLink to="/events-without-scheduling-using-dom">Without scheduling, using DOM</NavLink>
                 </li>
                 <li>
-                  <NavLink to="/without-scheduling-dom">Without scheduling, using DOM</NavLink>
-                </li> */}
+                  <NavLink to="/events-with-scheduling-using-dom">With scheduling, using DOM</NavLink>
+                </li>
               </ul>
             </nav>
             <main style={{ marginTop: '48px' }}>
@@ -70,9 +72,37 @@ const App: FunctionComponent = (): ReactElement => {
                   }}
                 />
 
-                {/* <Route path="/with-scheduling-dom" component={WithSchedulingDom} /> */}
+                {/* Events, without scheduling, using DOM */}
+                <Route
+                  path="/events-without-scheduling-using-dom"
+                  render={() => {
+                    return (
+                      <AnalysisPage
+                        id="events-without-scheduling-using-dom"
+                        title="Without scheduling, using DOM"
+                        render={(eventId: number) => {
+                          return <EventBoxWithoutSchedulingUsingDom eventId={eventId} />;
+                        }}
+                      />
+                    );
+                  }}
+                />
 
-                {/* <Route path="/without-scheduling-dom" component={WithoutSchedulingDom} /> */}
+                {/* Events, with scheduling, using DOM */}
+                <Route
+                  path="/events-with-scheduling-using-dom"
+                  render={() => {
+                    return (
+                      <AnalysisPage
+                        id="events-with-scheduling-using-dom"
+                        title="With scheduling, using DOM"
+                        render={(eventId: number) => {
+                          return <EventBoxWithSchedulingUsingDom eventId={eventId} />;
+                        }}
+                      />
+                    );
+                  }}
+                />
               </Switch>
             </main>
           </div>
