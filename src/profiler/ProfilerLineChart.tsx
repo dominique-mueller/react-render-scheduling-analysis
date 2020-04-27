@@ -61,6 +61,7 @@ const ProfilerLineChart: FunctionComponent<{
   );
 
   // Define ticks
+  // TODO: Fix me when refactoring into data utilities, somehow only the first tick is correct but the others aren't.
   const ticks: Array<number> = data
     .reduce((acc: Array<any>, item: any) => {
       if (acc[item.run] === undefined) {

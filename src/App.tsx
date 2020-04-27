@@ -1,4 +1,4 @@
-import React, { ReactElement, FunctionComponent, useState, useCallback } from 'react';
+import React, { ReactElement, FunctionComponent } from 'react';
 
 import { Switch, Route, BrowserRouter as Router, NavLink } from 'react-router-dom';
 
@@ -6,24 +6,12 @@ import { EventsProvider } from './shared/events/EventsContext';
 import AnalysisPage from './analysis/AnalysisPage';
 import { RenderSchedulerProvider } from './shared/render-scheduler/RenderSchedulerContext';
 import EventBoxWithoutSchedulingUsingReact from './analysis/EventBoxWithoutSchedulingUsingReact';
-import ProfilerLineChart from './profiler/ProfilerLineChart';
-import ProfilerFlameChart from './profiler/ProfilerFlameChart';
-import ProfilerStatistics from './profiler/ProfilerStatistics';
+import EventBoxWithSchedulingUsingReact from './analysis/EventBoxWithSchedulingUsingReact';
 
 /**
  * App
  */
 const App: FunctionComponent = (): ReactElement => {
-  const [eventsWithoutSchedulingUsingReactProfilerResults, setEventsWithoutSchedulingUsingReactProfilerResults] = useState<Array<any>>([]);
-
-  const complete = useCallback(
-    (profilerResults: Array<any>) => {
-      // console.log(profilerResults);
-      setEventsWithoutSchedulingUsingReactProfilerResults(profilerResults);
-    },
-    [setEventsWithoutSchedulingUsingReactProfilerResults],
-  );
-
   return (
     <EventsProvider>
       <RenderSchedulerProvider>
@@ -48,15 +36,6 @@ const App: FunctionComponent = (): ReactElement => {
                 </li> */}
               </ul>
             </nav>
-            {eventsWithoutSchedulingUsingReactProfilerResults.length > 0 && (
-              <>
-                <div style={{ width: 1500, height: 200 }}>
-                  <ProfilerLineChart profilerResults={eventsWithoutSchedulingUsingReactProfilerResults} />
-                </div>
-                <ProfilerFlameChart profilerResults={eventsWithoutSchedulingUsingReactProfilerResults} />
-                <ProfilerStatistics profilerResults={eventsWithoutSchedulingUsingReactProfilerResults} />
-              </>
-            )}
             <main style={{ marginTop: '48px' }}>
               <Switch>
                 {/* Events, without scheduling, using React */}
@@ -70,14 +49,13 @@ const App: FunctionComponent = (): ReactElement => {
                         render={(eventId: number) => {
                           return <EventBoxWithoutSchedulingUsingReact eventId={eventId} />;
                         }}
-                        complete={complete}
                       />
                     );
                   }}
                 />
 
                 {/* Events, with scheduling, using React */}
-                {/* <Route
+                <Route
                   path="/events-with-scheduling-using-react"
                   render={() => {
                     return (
@@ -87,14 +65,10 @@ const App: FunctionComponent = (): ReactElement => {
                         render={(eventId: number) => {
                           return <EventBoxWithSchedulingUsingReact eventId={eventId} />;
                         }}
-                        complete={(profilerResults: Array<any>) => {
-                          eventsWithSchedulingUsingReactProfilerResults.current = profilerResults;
-                          console.info(eventsWithSchedulingUsingReactProfilerResults.current);
-                        }}
                       />
                     );
                   }}
-                /> */}
+                />
 
                 {/* <Route path="/with-scheduling-dom" component={WithSchedulingDom} /> */}
 
