@@ -10,17 +10,22 @@
   "scripts": {
     "start": "react-scripts start",
     "start:build": "lite-server --baseDir=\"build\"",
-    "build": "react-scripts build --profile",
-    "start:analysis": "node run.js"
+    "start:analysis": "node ./build/start-analysis.bin.js --numberOfExecutions 10 --numberOfGeneratedEvents 20",
+    "build": "npm run build:app && npm run build:bin",
+    "build:app": "react-scripts build --profile",
+    "build:bin": "tsc --project tsconfig.bin.json"
   },
   "dependencies": {
+    "chalk": "4.0.x",
     "puppeteer": "3.0.x",
     "react": "16.13.x",
     "react-dom": "16.13.x",
-    "rxjs": "6.5.x"
+    "rxjs": "6.5.x",
+    "yargs": "15.3.x"
   },
   "devDependencies": {
     "@types/node": "13.13.x",
+    "@types/puppeteer": "2.0.x",
     "@types/react": "16.9.x",
     "@types/react-dom": "16.9.x",
     "lite-server": "2.5.x",

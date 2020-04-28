@@ -5,12 +5,15 @@ import { Observable, Subscription } from 'rxjs';
 import { createEventStream } from './event-stream';
 import EventBox from './EventBox';
 
-// Collect data and end data collection based on event stream
-const eventStream: Observable<Array<Event>> = createEventStream({
+// Define config
+const config = {
   emitInterval: 1000,
-  numberOfExecutions: 5,
-  numberOfGeneratedEvents: 100,
-});
+  numberOfExecutions: parseInt(new URLSearchParams(window.location.search).get('numberOfExecutions') || '5', 10),
+  numberOfGeneratedEvents: parseInt(new URLSearchParams(window.location.search).get('numberOfGeneratedEvents') || '100', 10),
+};
+
+// Collect data and end data collection based on event stream
+const eventStream: Observable<Array<Event>> = createEventStream(config);
 
 /**
  * App
@@ -27,12 +30,12 @@ const App: FunctionComponent = (): ReactElement => {
         // WORKAROUND: Because scheduling happens at different times, we need to count renders after we are sure the rendering happened
         setTimeout(() => {
           profilerResultsExectionCounter.current++;
-        }, 500);
+        }, config.emitInterval - 100);
       },
       complete: (): void => {
         setTimeout(() => {
           console.info(JSON.stringify(profilerResults.current, null, '  '));
-        }, 1000);
+        }, config.emitInterval);
       },
     });
 
@@ -70,7 +73,7 @@ const App: FunctionComponent = (): ReactElement => {
   return (
     <Profiler id="profiler" onRender={handleOnRender}>
       <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-        {[...Array(100)].map(
+        {[...Array(config.numberOfGeneratedEvents)].map(
           (value: undefined, index: number): ReactElement => {
             return <EventBox key={index} eventStream={eventStream} eventId={index} />;
           },
