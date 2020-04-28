@@ -6,9 +6,7 @@ import { AppConfig } from '../AppConfig';
 import { useEvents } from '../shared/events/EventsContext';
 import { ProfilerResult } from '../profiler/Profiler.interfaces';
 import { Event } from '../shared/events/EventsContext.interfaces';
-import ProfilerLineChart from '../profiler/ProfilerLineChart';
-import ProfilerFlameChart from '../profiler/ProfilerFlameChart';
-import ProfilerStatistics from '../profiler/ProfilerStatistics';
+import ProfilerResults from '../profiler/ProfilerResults';
 
 /**
  * Analysis Page
@@ -119,11 +117,7 @@ const AnalysisPage: FunctionComponent<{
       )}
       {!isAnalysisRunning && profilerResults.length > 0 && (
         <>
-          <div style={{ width: 1500, height: 200 }}>
-            <ProfilerLineChart profilerResults={profilerResults} />
-          </div>
-          <ProfilerFlameChart profilerResults={profilerResults} />
-          <ProfilerStatistics profilerResults={profilerResults} />
+          <ProfilerResults profilerResults={profilerResults} />
         </>
       )}
     </>
