@@ -45,7 +45,11 @@ export class RenderScheduler {
     this.isNextRenderScheduled = true;
 
     // Wait until next opportunity to render
-    await Promise.resolve();
+    await new Promise((resolve: () => void): void => {
+      requestAnimationFrame((): void => {
+        resolve();
+      });
+    });
 
     // Unmark next render as scheduled
     this.isNextRenderScheduled = false;
