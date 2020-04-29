@@ -1,5 +1,5 @@
-import { interval, Observable } from 'rxjs';
-import { take, map, share } from 'rxjs/operators';
+import { interval, Observable, of } from 'rxjs';
+import { take, map, share, switchMap, delay } from 'rxjs/operators';
 
 /**
  * Get random color
@@ -19,7 +19,11 @@ export const getRandomColor = (): string => {
  * Create event stream
  */
 export const createEventStream = ({ emitInterval, numberOfExecutions, numberOfGeneratedEvents }: any): Observable<any> => {
-  return interval(emitInterval).pipe(
+  return of(null).pipe(
+    delay(10000),
+    switchMap(() => {
+      return interval(emitInterval);
+    }),
     map(
       (): Array<Event> => {
         return [...Array(numberOfGeneratedEvents)].map((value: undefined, index: number): any => {

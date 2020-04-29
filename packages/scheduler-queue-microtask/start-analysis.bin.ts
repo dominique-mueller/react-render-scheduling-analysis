@@ -23,6 +23,10 @@ const arrowSymbol: string = process.platform === 'win32' ? '→' : '➜';
       type: 'number',
       required: true,
     })
+    .option('headless', {
+      type: 'boolean',
+      default: true,
+    })
     .strict(true).argv;
   const serverPort: number = 9000;
 
@@ -52,7 +56,7 @@ const arrowSymbol: string = process.platform === 'win32' ? '→' : '➜';
 
   // Start browser
   console.log(`${arrowSymbol} Start browser`);
-  const browser: Browser = await puppeteer.launch();
+  const browser: Browser = await puppeteer.launch({ headless: cliParameters.headless });
   const page: Page = await browser.newPage();
   const baseUrl: string = `http://localhost:${serverPort}/index.html`;
   const queryParameters: URLSearchParams = new URLSearchParams();

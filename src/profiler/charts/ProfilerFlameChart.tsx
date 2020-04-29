@@ -20,13 +20,13 @@ const ProfilerFlameChart: FunctionComponent<{ profilerResults: Array<ProfilerRes
     return {
       backgroundColor: '#D69E2E',
       color: '#FFF',
-      name: `Execution ${profilerResultsForRender[0].execution + 1} (${value}ms)`,
+      name: `Render ${profilerResultsForRender[0].execution + 1} (${value}ms)`,
       value: value,
       children: profilerResultsForRender.map((profilerResult: ProfilerResult, index: number): any => {
         return {
           backgroundColor: '#D69E2E',
           color: '#FFF',
-          name: `Render ${index + 1} (${profilerResult.actualDuration}ms)`,
+          name: `Update ${index + 1} (${profilerResult.actualDuration}ms)`,
           value: profilerResult.actualDuration,
         };
       }),
