@@ -27,7 +27,7 @@ const App: FunctionComponent = (): ReactElement => {
   // Render
   return (
     <main>
-      <h2>Profiler Results</h2>
+      <h1 style={{ fontSize: '18px', marginTop: 0, marginBottom: '24px' }}>Profiler Results</h1>
       {profilerResults.length === 0 ? <FileUpload onFile={handleFile} /> : <ProfilerResults profilerResults={profilerResults} />}
     </main>
   );

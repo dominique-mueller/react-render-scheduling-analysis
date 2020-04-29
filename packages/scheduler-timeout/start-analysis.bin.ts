@@ -45,7 +45,7 @@ const arrowSymbol: string = process.platform === 'win32' ? '→' : '➜';
 
   // Start browser
   console.log(`${arrowSymbol} Start browser`);
-  const browser: Browser = await puppeteer.launch({ headless: false });
+  const browser: Browser = await puppeteer.launch();
   const page: Page = await browser.newPage();
   const baseUrl: string = 'http://localhost:3000/index.html';
   const queryParameters: URLSearchParams = new URLSearchParams();
