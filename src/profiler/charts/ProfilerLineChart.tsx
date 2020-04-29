@@ -1,6 +1,6 @@
 import React, { FunctionComponent, ReactElement } from 'react';
 
-import { AreaChart, XAxis, YAxis, CartesianGrid, Tooltip, Area, ResponsiveContainer } from 'recharts';
+import { AreaChart, XAxis, YAxis, CartesianGrid, Tooltip, Area } from 'recharts';
 
 import { ProfilerResult } from '../Profiler.interfaces';
 import { getCompleteRenderDuration } from '../utilities/getCompleteRenderDuration';
@@ -32,7 +32,7 @@ const ProfilerLineChart: FunctionComponent<{
   const data: Array<any> = profilerResults.reduce(
     (acc: Array<any>, profilerResult: ProfilerResult, index: number): any => {
       acc.push({
-        run: profilerResult.run,
+        execution: profilerResult.execution,
         x: acc[index].x + profilerResult.actualDuration,
         y: profilerResult.actualDuration,
       });
@@ -41,7 +41,7 @@ const ProfilerLineChart: FunctionComponent<{
     // Start with x=0 so that the chart starts at the beginning
     [
       {
-        run: profilerResults[0].run,
+        execution: profilerResults[0].execution,
         x: 0,
         y: profilerResults[0].actualDuration,
       },
@@ -51,14 +51,14 @@ const ProfilerLineChart: FunctionComponent<{
   // Define ticks
   const ticks: Array<number> = data
     .reduce((acc: Array<any>, item: any) => {
-      if (acc[item.run] === undefined) {
-        acc[item.run] = [];
+      if (acc[item.execution] === undefined) {
+        acc[item.execution] = [];
       }
-      acc[item.run].push(item);
+      acc[item.execution].push(item);
       return acc;
     }, [])
-    .map((dataByRun: Array<any>): number => {
-      return dataByRun[dataByRun.length - 1].x;
+    .map((dataByExecution: Array<any>): number => {
+      return dataByExecution[dataByExecution.length - 1].x;
     });
 
   // Define tick formatter

@@ -56,7 +56,7 @@ const ProfilerUpdateDurationBarChart: FunctionComponent<{
           position: 'right',
           fontSize: '10px',
           fill: '#38A169',
-          fontWeight: 500,
+          fontWeight: 600,
           formatter: (label: number | string): string => {
             return `${label}ms`;
           },

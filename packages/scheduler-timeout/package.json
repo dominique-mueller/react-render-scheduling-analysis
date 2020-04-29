@@ -10,7 +10,7 @@
   "scripts": {
     "start": "react-scripts start",
     "start:build": "lite-server --baseDir=\"build\"",
-    "start:analysis": "node ./build/start-analysis.bin.js --numberOfExecutions 10 --numberOfGeneratedEvents 20",
+    "start:analysis": "node ./build/start-analysis.bin.js --numberOfExecutions 10 --numberOfGeneratedEvents 200",
     "build": "npm run build:app && npm run build:bin",
     "build:app": "react-scripts build --profile",
     "build:bin": "tsc --project tsconfig.bin.json"

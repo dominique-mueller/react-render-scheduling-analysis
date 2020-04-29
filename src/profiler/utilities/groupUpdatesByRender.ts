@@ -5,10 +5,10 @@ import { ProfilerResult } from '../Profiler.interfaces';
  */
 export const groupUpdatesByRender = (profilerResults: Array<ProfilerResult>): Array<Array<ProfilerResult>> => {
   return profilerResults.reduce((profilerResultsGroupedByRender: Array<Array<ProfilerResult>>, profilerResult: ProfilerResult) => {
-    if (profilerResultsGroupedByRender[profilerResult.run] === undefined) {
-      profilerResultsGroupedByRender[profilerResult.run] = [];
+    if (profilerResultsGroupedByRender[profilerResult.execution] === undefined) {
+      profilerResultsGroupedByRender[profilerResult.execution] = [];
     }
-    profilerResultsGroupedByRender[profilerResult.run].push(profilerResult);
+    profilerResultsGroupedByRender[profilerResult.execution].push(profilerResult);
     return profilerResultsGroupedByRender;
   }, []);
 };

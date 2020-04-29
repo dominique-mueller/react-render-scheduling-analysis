@@ -1,114 +1,35 @@
-import React, { ReactElement, FunctionComponent } from 'react';
+import React, { ReactElement, FunctionComponent, useState } from 'react';
 
-import { Switch, Route, BrowserRouter as Router, NavLink } from 'react-router-dom';
+import ProfilerResults from './profiler/ProfilerResults';
+import FileUpload from './file-upload/FileUpload';
 
-import { EventsProvider } from './shared/events/EventsContext';
-import AnalysisPage from './analysis/AnalysisPage';
-import { RenderSchedulerProvider } from './shared/render-scheduler/RenderSchedulerContext';
-import EventBoxWithoutSchedulingUsingReact from './analysis/EventBoxWithoutSchedulingUsingReact';
-import EventBoxWithSchedulingUsingReact from './analysis/EventBoxWithSchedulingUsingReact';
-import EventBoxWithoutSchedulingUsingDom from './analysis/EventBoxWithoutSchedulingUsingDom';
-import EventBoxWithSchedulingUsingDom from './analysis/EventBoxWithSchedulingUsingDom';
+import './App.styles.css';
 
 /**
  * App
  */
 const App: FunctionComponent = (): ReactElement => {
+  // State
+  const [profilerResults, setProfilerResults] = useState<Array<any>>([]);
+
+  // Handle file
+  const handleFile = async (file: File): Promise<void> => {
+    const fileContent: any = await new Promise((resolve): void => {
+      const fileReader: FileReader = new FileReader();
+      fileReader.onload = (): void => {
+        resolve(JSON.parse(fileReader.result as string));
+      };
+      fileReader.readAsText(file);
+    });
+    setProfilerResults(fileContent);
+  };
+
+  // Render
   return (
-    <EventsProvider>
-      <RenderSchedulerProvider>
-        <Router>
-          <div style={{ margin: '32px' }}>
-            <header style={{ padding: '16px 12px', backgroundColor: '#333' }}>
-              <h1 style={{ marginTop: '0', marginBottom: '0', fontSize: '24px', color: '#FFF' }}>React Scheduling Experiment</h1>
-            </header>
-            <nav style={{ backgroundColor: '#EEE', padding: '12px' }}>
-              <ul style={{ listStyleType: 'none', paddingLeft: '0', marginTop: '0', marginBottom: '0', display: 'flex' }}>
-                <li style={{ marginRight: '24px' }}>
-                  <NavLink to="/events-without-scheduling-using-react">Without scheduling, using React</NavLink>
-                </li>
-                <li style={{ marginRight: '24px' }}>
-                  <NavLink to="/events-with-scheduling-using-react">With scheduling, using React</NavLink>
-                </li>
-                <li style={{ marginRight: '24px' }}>
-                  <NavLink to="/events-without-scheduling-using-dom">Without scheduling, using DOM</NavLink>
-                </li>
-                <li>
-                  <NavLink to="/events-with-scheduling-using-dom">With scheduling, using DOM</NavLink>
-                </li>
-              </ul>
-            </nav>
-            <main style={{ marginTop: '48px' }}>
-              <Switch>
-                {/* Events, without scheduling, using React */}
-                <Route
-                  path="/events-without-scheduling-using-react"
-                  render={() => {
-                    return (
-                      <AnalysisPage
-                        id="events-without-scheduling-using-react"
-                        title="Without scheduling, using React"
-                        render={(eventId: number) => {
-                          return <EventBoxWithoutSchedulingUsingReact eventId={eventId} />;
-                        }}
-                      />
-                    );
-                  }}
-                />
-
-                {/* Events, with scheduling, using React */}
-                <Route
-                  path="/events-with-scheduling-using-react"
-                  render={() => {
-                    return (
-                      <AnalysisPage
-                        id="events-with-scheduling-using-react"
-                        title="With scheduling, using React"
-                        render={(eventId: number) => {
-                          return <EventBoxWithSchedulingUsingReact eventId={eventId} />;
-                        }}
-                      />
-                    );
-                  }}
-                />
-
-                {/* Events, without scheduling, using DOM */}
-                <Route
-                  path="/events-without-scheduling-using-dom"
-                  render={() => {
-                    return (
-                      <AnalysisPage
-                        id="events-without-scheduling-using-dom"
-                        title="Without scheduling, using DOM"
-                        render={(eventId: number) => {
-                          return <EventBoxWithoutSchedulingUsingDom eventId={eventId} />;
-                        }}
-                      />
-                    );
-                  }}
-                />
-
-                {/* Events, with scheduling, using DOM */}
-                <Route
-                  path="/events-with-scheduling-using-dom"
-                  render={() => {
-                    return (
-                      <AnalysisPage
-                        id="events-with-scheduling-using-dom"
-                        title="With scheduling, using DOM"
-                        render={(eventId: number) => {
-                          return <EventBoxWithSchedulingUsingDom eventId={eventId} />;
-                        }}
-                      />
-                    );
-                  }}
-                />
-              </Switch>
-            </main>
-          </div>
-        </Router>
-      </RenderSchedulerProvider>
-    </EventsProvider>
+    <main>
+      <h2>Profiler Results</h2>
+      {profilerResults.length === 0 ? <FileUpload onFile={handleFile} /> : <ProfilerResults profilerResults={profilerResults} />}
+    </main>
   );
 };
 

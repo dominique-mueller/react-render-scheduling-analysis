@@ -2,7 +2,7 @@
  * Profiler result
  */
 export interface ProfilerResult extends ProfilerOutput {
-  run: number;
+  execution: number;
   timestamp: Date;
 }
 

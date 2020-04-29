@@ -20,7 +20,7 @@ const ProfilerFlameChart: FunctionComponent<{ profilerResults: Array<ProfilerRes
     return {
       backgroundColor: '#D69E2E',
       color: '#FFF',
-      name: `Run ${profilerResultsForRender[0].run + 1} (${value}ms)`,
+      name: `Execution ${profilerResultsForRender[0].execution + 1} (${value}ms)`,
       value: value,
       children: profilerResultsForRender.map((profilerResult: ProfilerResult, index: number): any => {
         return {
@@ -41,7 +41,7 @@ const ProfilerFlameChart: FunctionComponent<{ profilerResults: Array<ProfilerRes
     <div style={{ paddingLeft: '64px' }}>
       <FlameGraph
         data={{
-          name: `All runs (${completeTime}ms)`,
+          name: `Root (${completeTime}ms)`,
           backgroundColor: '#D69E2E',
           color: '#FFF',
           value: completeTime,
