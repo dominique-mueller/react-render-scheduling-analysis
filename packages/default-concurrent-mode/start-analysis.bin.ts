@@ -24,11 +24,18 @@ const arrowSymbol: string = process.platform === 'win32' ? '→' : '➜';
       required: true,
     })
     .strict(true).argv;
+  const serverPort: number = 9000;
 
   // Logging
   console.log(chalk.white.bold.underline('React Scheduling Performance Analysis'));
   console.log('');
   const startTime = new Date().getTime();
+
+  // Prepare
+  await fs.rmdir('results', {
+    recursive: true,
+  });
+  await fs.mkdir('results');
 
   // Start server
   console.log(`${arrowSymbol} Start server`);
@@ -38,7 +45,7 @@ const arrowSymbol: string = process.platform === 'win32' ? '→' : '➜';
     response.end(data);
   });
   await new Promise((resolve: () => void): void => {
-    server.listen(3000, (): void => {
+    server.listen(serverPort, (): void => {
       resolve();
     });
   });
@@ -47,7 +54,7 @@ const arrowSymbol: string = process.platform === 'win32' ? '→' : '➜';
   console.log(`${arrowSymbol} Start browser`);
   const browser: Browser = await puppeteer.launch();
   const page: Page = await browser.newPage();
-  const baseUrl: string = 'http://localhost:3000/index.html';
+  const baseUrl: string = `http://localhost:${serverPort}/index.html`;
   const queryParameters: URLSearchParams = new URLSearchParams();
   queryParameters.set('numberOfExecutions', cliParameters.numberOfExecutions.toString());
   queryParameters.set('numberOfGeneratedEvents', cliParameters.numberOfGeneratedEvents.toString());
@@ -55,16 +62,18 @@ const arrowSymbol: string = process.platform === 'win32' ? '→' : '➜';
 
   // Wait for and retrieve results
   console.log(`${arrowSymbol} Run performance analysis`);
+  await page.tracing.start({ path: 'results/tracing-profile.json' });
   const results: string = await new Promise((resolve: (value: string) => void): void => {
     page.on('console', async (event) => {
       const value: string = (await event.args()[0].jsonValue()) as string;
       resolve(value);
     });
   });
+  await page.tracing.stop();
 
   // Write results to file
   console.log(`${arrowSymbol} Save performance analysis results to disk`);
-  await fs.writeFile('./results.json', results);
+  await fs.writeFile('results/profiler-logs.json', results);
 
   // Close browser
   console.log(`${arrowSymbol} Close browser`);
