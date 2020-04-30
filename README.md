@@ -6,8 +6,6 @@ Using custom scheduling in **[React](https://github.com/facebook/react)**.
 
 </div>
 
-TODO: Context / component props
-
 <br><br>
 
 ## Scheduling in React
@@ -209,23 +207,122 @@ Now, the following re-renderings happen:
 
 <br><br>
 
-## Manually scheduling in React
+## Manual scheduling in React
 
-TODO: Solutions:
+### Scheduling synchronously
 
-- Merge state
-- Manual scheduling
+TODO
+
+- Synchronous
+- OR: Merge state
+
+<br>
+
+### Scheduling asynchronously / distributed
+
+In JavaScript, the following scheduling mechanisms exist:
+
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>API</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td rowspan="4">Microtask</td>
+      <td>
+        <code>queueMicrotask()</code>
+      </td>
+      <td>
+        TODO
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>Promise.resolve()</code>
+      </td>
+      <td>
+        TODO
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>window.postMessage()</code>
+        <br>
+        <code>MessageChannel.port1.postMessage()</code>
+      </td>
+      <td>
+        TODO
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>MutationObserver</code>
+      </td>
+      <td>
+        TODO
+      </td>
+    </tr>
+    <tr>
+      <td rowspan="2">
+        Macrotask / Task
+      </td>
+      <td>
+        <code>setTimeout()</code>
+      </td>
+      <td>
+        TODO
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>setInterval()</code>
+      </td>
+      <td>
+        TODO
+      </td>
+    </tr>
+    <tr>
+      <td rowspan="2">
+        Other
+      </td>
+      <td>
+        <code>requestAnimationFrame()</code>
+      </td>
+      <td>
+        TODO
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>requestIdleCallback()</code>
+      </td>
+      <td>
+        TODO
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+Order: Stack -> Micro -> rAF -> Macro -> Idle
+(see [1](https://stackoverflow.com/questions/43050448/when-will-requestanimationframe-be-executed))
+
+> Resources:
+>
+> - [1](https://github.com/YuzuJS/setImmediate/blob/master/README.md)
+> - [2](https://github.com/kriskowal/asap/blob/master/browser-raw.js)
+
+> Note: This excludes Node.JS-specific APIs that can be used for scheduling purposes.
 
 <br><br>
 
-## Custom scheduling (e.g. when using RxJS)
+## Concurrent Mode (experimental)
 
-### Types of scheduling
+TODO
 
-TOOD: Sync
+<br><br>
 
-Scheduling (async)
-
-- Microtask
-- Macrotask
-- Others
+TODO: Context / component props
