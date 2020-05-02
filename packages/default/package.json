@@ -1,5 +1,5 @@
 {
-  "name": "react-scheduling-experiment",
+  "name": "react-scheduling-experiment--default",
   "version": "1.0.0",
   "description": "Using custom scheduling in React",
   "private": true,
