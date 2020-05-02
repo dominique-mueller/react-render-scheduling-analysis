@@ -8,6 +8,12 @@ Using custom scheduling in **[React](https://github.com/facebook/react)**.
 
 <br><br>
 
+## What is scheduling?
+
+TODO
+
+<br><br>
+
 ## Scheduling in React
 
 ### Automatic scheduling in React
@@ -15,11 +21,12 @@ Using custom scheduling in **[React](https://github.com/facebook/react)**.
 Within scopes known to React - such as a `useEffect()` hook body or an event handler function - all synchronous function calls that
 manipulate state (using the `useState()` hook) will be batched up automatically, thus leading to only a single scheduled re-render instead
 of potentially multiple ones. [[1](https://reactjs.org/docs/faq-state.html#when-is-setstate-asynchronous),
-[2](https://github.com/facebook/react/issues/16387#issuecomment-521623662)]
+[2](https://overreacted.io/react-as-a-ui-runtime/),
+[3](https://github.com/facebook/react/issues/16387#issuecomment-521623662)]
 
 For instance:
 
-```typescript
+```ts
 // State
 const [value, setValue] = useState('');
 const [otherValue, setOtherValue] = useState('');
@@ -36,7 +43,7 @@ useEffect(() => {
 
 Let's assume we update the value, e.g. within an event handler. For instance:
 
-```typescript
+```ts
 setValue('cool value');
 ```
 
@@ -51,16 +58,16 @@ Now, the following re-renderings happen:
   </thead>
   <tbody>
     <tr>
-      <td>1</td>
-      <td>
+      <td style="vertical-align: top">1</td>
+      <td style="vertical-align: top">
         Calling <code>setValue('cool value')</code> will lead to the <code>value</code> state variable being updated by the
         <code>useState()</code> hook. Because updating state via the <code>useState()</code> hook will always trigger a re-render - at least
         if the value has actually changed, which in our case it did - React triggers a re-render.
       </td>
     </tr>
     <tr>
-      <td>2</td>
-      <td>
+      <td style="vertical-align: top">2</td>
+      <td style="vertical-align: top">
         Our <code>useEffect()</code> hook lists the <code>value</code> state variable as a dependency. Thus, changing the <code>value</code>
         state variable value will always lead to the <code>useEffect()</code> hook being executed. Within our <code>useEffect()</code> hook,
         we update three other state variables (again, based on `useState()`). Now: React has enough context for optimization: It knows what
@@ -80,7 +87,7 @@ Now, things are different when asynchronous operations (e.g. promises, timeouts,
 
 For instance:
 
-```typescript
+```ts
 // State
 const [value, setValue] = useState('');
 const [otherValue, setOtherValue] = useState('');
@@ -99,7 +106,7 @@ useEffect(() => {
 
 Let's assume we update the value, e.g. within an event handler. For instance:
 
-```typescript
+```ts
 setValue('cool value');
 ```
 
@@ -114,16 +121,16 @@ Now, the following re-renderings happen:
   </thead>
   <tbody>
     <tr>
-      <td>1</td>
-      <td>
+      <td style="vertical-align: top">1</td>
+      <td style="vertical-align: top">
         Calling <code>setValue('cool value')</code> will lead to the <code>value</code> state variable being updated by the
         <code>useState()</code> hook. Because updating state via the <code>useState()</code> hook will always trigger a re-render - at least
         if the value has actually changed, which in our case it did - React triggers a re-render.
       </td>
     </tr>
     <tr>
-      <td>2, 3, 4</td>
-      <td>
+      <td style="vertical-align: top">2, 3, 4</td>
+      <td style="vertical-align: top">
         Our <code>useEffect()</code> hook lists the <code>value</code> state variable as a dependency. Thus, changing the <code>value</code>
         state variable value will always lead to the <code>useEffect()</code> hook being executed. Within our <code>useEffect()</code> hook,
         we update three other state variables (again, based on <code>useState()</code>) once our promise resolves. Now: Due to our side
@@ -145,7 +152,7 @@ it is too unpredicable.
 
 For instance:
 
-```typescript
+```ts
 // State
 const [value, setValue] = useState('');
 const [otherValue, setOtherValue] = useState('');
@@ -162,7 +169,7 @@ useEffect(() => {
 
 Let's assume we update the value, e.g. within an event handler. For instance:
 
-```typescript
+```ts
 setValue('cool value');
 ```
 
@@ -177,16 +184,16 @@ Now, the following re-renderings happen:
   </thead>
   <tbody>
     <tr>
-      <td>1</td>
-      <td>
+      <td style="vertical-align: top">1</td>
+      <td style="vertical-align: top">
         Calling <code>setValue('cool value')</code> will lead to the <code>value</code> state variable being updated by the
         <code>useState()</code> hook. Because updating state via the <code>useState()</code> hook will always trigger a re-render - at least
         if the value has actually changed, which in our case it did - React triggers a re-render.
       </td>
     </tr>
     <tr>
-      <td>2</td>
-      <td>
+      <td style="vertical-align: top">2</td>
+      <td style="vertical-align: top">
         Our first <code>useEffect()</code> hook lists the <code>value</code> state variable as a dependency. Thus, changing the
         <code>value</code> state variable value will always lead to the <code>useEffect()</code> hook being executed. Within our
         <code>useEffect()</code> hook, we update the <code>otherValue</code> state variables (again, based on <code>useState()</code>). This
@@ -194,8 +201,8 @@ Now, the following re-renderings happen:
       </td>
     </tr>
     <tr>
-      <td>3</td>
-      <td>
+      <td style="vertical-align: top">3</td>
+      <td style="vertical-align: top">
         Our second <code>useEffect()</code> hook has the <code>otherValue</code> state variable as its dependency. Thus, the first
         <code>useEffect()</code> changing the <code>otherValue</code> state variable value will always lead to the second
         <code>useEffect()</code> hook being executed. Within our  second <code>useEffect()</code> hook, we update the other two state
@@ -209,120 +216,224 @@ Now, the following re-renderings happen:
 
 ## Manual scheduling in React
 
+React itself (like many frontend frameworks) hides most of its implementation details and low-level APIs from us, so that we can concentrate
+on building applications rather than deep diving into React internals. This also applies to the render pipeline and its scheduling
+mechanisms.
+
+<br>
+
+### The `unstable_batchedUpdates` API
+
+Luckily for us, though, React actually does expose _one_ API that enables us to group / batch renderings: `unstable_batchedUpdates`.
+
+However, this API, like a few others React exposes, is prefixed with `unstable` - meaning it this AP not part of the public
+React API and thus might change or even break with any future release. But, the `unstable_batchedUpdates` API is the most "stable unstable"
+React APIs out there (see [this tweet](https://twitter.com/dan_abramov/status/1103399900371447819)), and many popular projects rely upon it
+(e.g. [React Redux](https://react-redux.js.org/api/batch)). So it's pretty safe to use.
+
+So, it's pretty safe to use? For now, yes. Should it get removed at some point (e.g. React 17) we just need to remove the
+`unstable_batchedUpdates` optimzations and - while performance might worsen - our code continues to work just fine. With the upcoming
+[Concurrent Mode](https://reactjs.org/docs/concurrent-mode-intro.html), chances are good that the `unstable_batchedUpdates` API might
+actually become useless anyways as React will be intelligent enough to do most of the optimizations on its own. Until then,
+`unstable_batchedUpdates` is the way to go.
+
+<br>
+
 ### Scheduling synchronously
 
-TODO
+In the rather simple use cases, we can use `unstable_batchedUpdates` right away. A common scenario is running asynchronous code in a
+`useEffect()` hook, and in that situation we can wrap all state change function calls in a single `unstable_batchedUpdates`. This scheduling
+is synchronous, as React will render changes right away instead of sometimes later in the current task.
 
-- Synchronous
-- OR: Merge state
+For instance:
+
+```diff
+  useEffect(() => {
+    Promise.resolve().then(() => {
++     unstable_batchedUpdates(() => {
+        setOtherValue(`other ${value}.`);
+        setThisValue(`this ${value}.`);
+        setThatValue(`that ${value}.`);
++     });
+    });
+  }, [value]);
+```
+
+#### Alternative: Combined state
+
+Sometimes, for example if all state lives in the same component, it's just easier to combine multiple `useState()`s into a single
+`useState()`, e.g. by combining state into an object.
+
+For instance:
+
+```diff
+  useEffect(() => {
+    Promise.resolve().then(() => {
++     unstable_batchedUpdates(() => {
+-       setOtherValue(`other ${value}.`);
+-       setThisValue(`this ${value}.`);
+-       setThatValue(`that ${value}.`);
++       setAdditionalValues({
++         otherValue: `other ${value}.`,
++         thisValue: `this ${value}.`,
++         thatValue: `that ${value}.`
++       });
++     });
+    });
+  }, [value]);
+```
 
 <br>
 
 ### Scheduling asynchronously / distributed
 
-In JavaScript, the following scheduling mechanisms exist:
+Other times, we simply cannot batch updates synchronously, or we do not want to.
 
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>API</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td rowspan="4">Microtask</td>
-      <td>
-        <code>queueMicrotask()</code>
-      </td>
-      <td>
-        TODO
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <code>Promise.resolve()</code>
-      </td>
-      <td>
-        TODO
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <code>window.postMessage()</code>
-        <br>
-        <code>MessageChannel.port1.postMessage()</code>
-      </td>
-      <td>
-        TODO
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <code>MutationObserver</code>
-      </td>
-      <td>
-        TODO
-      </td>
-    </tr>
-    <tr>
-      <td rowspan="2">
-        Macrotask / Task
-      </td>
-      <td>
-        <code>setTimeout()</code>
-      </td>
-      <td>
-        TODO
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <code>setInterval()</code>
-      </td>
-      <td>
-        TODO
-      </td>
-    </tr>
-    <tr>
-      <td rowspan="2">
-        Other
-      </td>
-      <td>
-        <code>requestAnimationFrame()</code>
-      </td>
-      <td>
-        TODO
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <code>requestIdleCallback()</code>
-      </td>
-      <td>
-        TODO
-      </td>
-    </tr>
-  </tbody>
-</table>
+#### Use Case: Using RxJS
 
-Order: Stack -> Micro -> rAF -> Macro -> Idle
-(see [1](https://stackoverflow.com/questions/43050448/when-will-requestanimationframe-be-executed))
+One use case where we cannot synchronously batch updates is when using [RxJS](https://github.com/ReactiveX/rxjs) to share and manage data
+across multiple components. Somewhere up the hierarchy, an Observable exists that emits data, and multiple components subscribe to that
+Observable to retrieve the data.
 
-> Resources:
->
-> - [1](https://github.com/YuzuJS/setImmediate/blob/master/README.md)
-> - [2](https://github.com/kriskowal/asap/blob/master/browser-raw.js)
+For instance:
 
-> Note: This excludes Node.JS-specific APIs that can be used for scheduling purposes.
+```tsx
+const [value, setValue] = useState('');
+const dataStream = useMyObservable();
+
+useEffect(() => {
+  // Update value when it changes
+  const subscription = dataStream.subscribe((newValue) => {
+    setValue(newValue);
+  });
+
+  // Cleanup
+  return () => {
+    subscription.unsubscribe();
+  };
+});
+```
+
+Now, in this example we basically opt-out of React features; we do not use a [React Context](https://reactjs.org/docs/context.html) to
+manage and distribute data across multiple components, but we instead use our own solution. Thus, React has no way of knowing how to
+optimize here. Even though the original data source (here our Observable) only emits data once - at the same time, to all components using
+it - React will re-render every single component separately.
+
+#### Render scheduler requirements
+
+The solution to this problem is a custom scheduling solution that batches up multiple render instructions (from multiple components). This
+custom scheduler
+
+- ideally exist once at a central place, and is shared across components<br>
+  → we can provide the render scheduler using a React Context, or by exporting it as a singleton from a JavaScript module
+- runs render instructions asynchronously, meaning after all synchronous component code has been executed<br>
+  → we can use [Microtasks](https://developer.mozilla.org/en-US/docs/Web/API/HTML_DOM_API/Microtask_guide) to run our render instructions
+  right after all synchronous code has been executed
+
+> We are using Microtasks here to schedule renderings as early as possible. But it's also possible to use Tasks (e.g. `setTimeout()`) or
+> even render-based queues (e.g. `requestAnimationFrame()`) for the purpose of render scheduling.
+
+#### An exemplary render scheduler using Microtasks and `unstable_batchedUpdates`
+
+The following is an example implementation of such a render scheduler. Using the `scheduleTask()` function, components can wrap their state-
+changing code similar to just using `unstable_batchedUpdates`. The render scheduler will remember all those tasks, and queue (scheduling) a
+microtask. Once the browser has executed all synchronous code and continues to run all queued microtasks, it will pick up the render
+scheduler microtask which will then execute all remembered tasks, wrapped within a unstable_batchedUpdates` function.
+
+Render scheduler:
+
+```ts
+import { unstable_batchedUpdates as batchedUpdates } from 'react-dom';
+
+/**
+ * Render Scheduler
+ */
+export class RenderScheduler {
+  /**
+   * List of scheduled tasks
+   */
+  private scheduledTasks: Array<Function>;
+
+  /**
+   * Flag, describing whether the next render has already been scheduled
+   */
+  private isNextRenderScheduled: boolean;
+
+  /**
+   * Constructor
+   */
+  constructor() {
+    this.scheduledTasks = [];
+    this.isNextRenderScheduled = false;
+  }
+
+  /**
+   * Schedule a new task
+   *
+   * @param task Task
+   */
+  public scheduleTask(task: Function): void {
+    // Schedule the task
+    this.scheduledTasks.push(task);
+
+    // Schedule the next render (if not yet done)
+    if (!this.isNextRenderScheduled) {
+      this.scheduleTaskExecution();
+    }
+  }
+
+  /**
+   * Schedule task execution
+   */
+  private async scheduleTaskExecution(): Promise<void> {
+    // Mark next render as scheduled
+    this.isNextRenderScheduled = true;
+
+    // Wait until next opportunity to render
+    queueMicrotask((): void => {
+      // Unmark next render as scheduled
+      this.isNextRenderScheduled = false;
+
+      // Get tasks to be applied
+      const scheduledTasksToBeApplied: Array<Function> = this.scheduledTasks;
+      this.scheduledTasks = [];
+
+      // Run all tasks batched (and in correct order)
+      batchedUpdates((): void => {
+        for (let i = 0; i < scheduledTasksToBeApplied.length; i++) {
+          scheduledTasksToBeApplied[i]();
+        }
+      });
+    });
+  }
+}
+```
+
+Assuming the `RenderScheduler` above has been instantiated in a Context and gets provided via the `useRenderScheduler()` hook, components
+can now schedule render tasks the following way:
+
+```diff
+  const [value, setValue] = useState('');
+  const dataStream = useMyObservable();
++ const renderScheduler = useRenderScheduler();
+
+  useEffect(() => {
+    // Update value when it changes
+    const subscription = dataStream.subscribe((newValue) => {
++     renderScheduler.scheduleTask(() => {
+        setValue(newValue);
++     });
+    });
+
+    // Cleanup
+    return () => {
+      subscription.unsubscribe();
+    };
+  });
+```
 
 <br><br>
 
-## Concurrent Mode (experimental)
+## Performance Analysis
 
 TODO
-
-<br><br>
-
-TODO: Context / component props
