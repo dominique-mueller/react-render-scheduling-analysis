@@ -14,7 +14,7 @@ const config = {
 };
 
 // Collect data and end data collection based on event stream
-const eventStream: Observable<Array<Event>> = createEventStream(config);
+const eventStream: Observable<Array<any>> = createEventStream(config);
 
 // Create render scheduler
 const renderScheduler: RenderScheduler = new RenderScheduler();

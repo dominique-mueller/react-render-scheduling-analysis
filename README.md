@@ -437,3 +437,27 @@ can now schedule render tasks the following way:
 ## Performance Analysis
 
 TODO
+
+Testing environment:
+
+- TODO
+
+### Without scheduling
+
+TODO
+
+### Scheduling with Microtasks
+
+TODO
+
+### Scheduling with Macrotasks
+
+TODO
+
+### Scheduling by Render Cycle
+
+TODO
+
+### Bonus: Concurrent Mode
+
+TODO

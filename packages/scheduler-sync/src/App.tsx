@@ -13,11 +13,11 @@ const config = {
   numberOfGeneratedEvents: parseInt(new URLSearchParams(window.location.search).get('numberOfGeneratedEvents') || '100', 10),
 };
 
-// Collect data and end data collection based on event stream
-const eventStream: Observable<Array<any>> = createEventStream(config);
-
 // Create render scheduler
 const renderScheduler: RenderScheduler = new RenderScheduler();
+
+// Collect data and end data collection based on event stream
+const eventStream: Observable<Array<any>> = createEventStream(config, renderScheduler);
 
 /**
  * App

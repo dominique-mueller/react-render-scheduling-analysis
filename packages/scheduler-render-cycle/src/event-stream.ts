@@ -25,7 +25,7 @@ export const createEventStream = ({ emitInterval, numberOfExecutions, numberOfGe
       return interval(emitInterval);
     }),
     map(
-      (): Array<Event> => {
+      (): Array<any> => {
         return [...Array(numberOfGeneratedEvents)].map((value: undefined, index: number): any => {
           return {
             id: index,
