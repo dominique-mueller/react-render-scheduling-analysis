@@ -421,7 +421,7 @@ We are running the performance analysis with the following parameters:
 
 The following table shows a short test summary. See further chapters for more details.
 
-| Test case                                                                                                           | Average Render time | Comparison      |
+| Test case                                                                                                           | Average render time | Comparison      |
 | ------------------------------------------------------------------------------------------------------------------- | ------------------- | --------------- |
 | [No scheduling](#test-case-no-scheduling)                                                                           | 9.69ms              | 100% (baseline) |
 | [Synchronous scheduling by manual flush](#test-case-synchronous-scheduling-by-manual-flush)                         | 1.88ms              | 19.40%          |
@@ -429,6 +429,10 @@ The following table shows a short test summary. See further chapters for more de
 | [Asynchronous scheduling using Macrotasks](##test-case-asynchronous-scheduling-using-macrotasks)                    | 1.84ms              | 18.99%          |
 | [Asynchronous scheduling using based on render cycle](#test-case-asynchronous-scheduling-based-on-the-render-cycle) | 1.84ms              | 18.99%          |
 | [Concurrent Mode (experimental!)](#bonus-concurrent-mode-experimental)                                              | 1.85ms              | 19.09%          |
+
+It should be noted that actual numbers are not that important, mainly because they will never be 100% exact and realisistic, partially also
+because the Chrome performance tracing profiler and the React profiler have a hard-to-measure impact on the performance. What's way more
+interesting here is _how faster or slower_ something got in comparison.
 
 #### Interpretation of results
 
