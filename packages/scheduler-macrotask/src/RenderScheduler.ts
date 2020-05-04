@@ -45,24 +45,20 @@ export class RenderScheduler {
     this.isNextRenderScheduled = true;
 
     // Wait until next opportunity to render
-    await new Promise((resolve: () => void): void => {
-      setTimeout(() => {
-        resolve();
-      }, 0);
-    });
+    setTimeout(() => {
+      // Unmark next render as scheduled
+      this.isNextRenderScheduled = false;
 
-    // Unmark next render as scheduled
-    this.isNextRenderScheduled = false;
+      // Get tasks to be applied
+      const scheduledTasksToBeApplied: Array<Function> = this.scheduledTasks;
+      this.scheduledTasks = [];
 
-    // Get tasks to be applied
-    const scheduledTasksToBeApplied: Array<Function> = this.scheduledTasks;
-    this.scheduledTasks = [];
-
-    // Run all tasks batched (and in correct order)
-    batchedUpdates((): void => {
-      for (let i = 0; i < scheduledTasksToBeApplied.length; i++) {
-        scheduledTasksToBeApplied[i]();
-      }
-    });
+      // Run all tasks batched (and in correct order)
+      batchedUpdates((): void => {
+        for (let i = 0; i < scheduledTasksToBeApplied.length; i++) {
+          scheduledTasksToBeApplied[i]();
+        }
+      });
+    }, 0);
   }
 }

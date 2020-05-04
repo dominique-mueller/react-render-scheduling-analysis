@@ -6,13 +6,7 @@ Using custom scheduling in **[React](https://github.com/facebook/react)**.
 
 </div>
 
-<br><br>
-
-## What is scheduling?
-
-TODO
-
-<br><br>
+<br><br><br>
 
 ## Scheduling in React
 
@@ -212,7 +206,34 @@ Now, the following re-renderings happen:
   </tbody>
 </table>
 
-<br><br>
+<br>
+
+### No automatic scheduling ouside of React scopes (e.g. RxJS)
+
+When managing and distributing state outside of scopes known to React, e.g. when using [RxJS](https://github.com/ReactiveX/rxjs) (instead of
+a React Context), React has no way of knowing how to optimize here. Even though the original data source (here our Observable) only emits
+data once - at the same time, to all components subscribed to it - React will re-render every single component separately.
+
+For instance:
+
+```tsx
+const [value, setValue] = useState('');
+const dataStream = useMyObservable();
+
+useEffect(() => {
+  // Update value when it changes
+  const subscription = dataStream.subscribe((newValue) => {
+    setValue(newValue);
+  });
+
+  // Cleanup
+  return () => {
+    subscription.unsubscribe();
+  };
+});
+```
+
+<br><br><br>
 
 ## Manual scheduling in React
 
@@ -239,7 +260,7 @@ actually become useless anyways as React will be intelligent enough to do most o
 
 <br>
 
-### Scheduling synchronously
+### Scheduling synchronously, within a component
 
 In the rather simple use cases, we can use `unstable_batchedUpdates` right away. A common scenario is running asynchronous code in a
 `useEffect()` hook, and in that situation we can wrap all state change function calls in a single `unstable_batchedUpdates`. This scheduling
@@ -285,57 +306,17 @@ For instance:
 
 <br>
 
-### Scheduling asynchronously / distributed
+### Scheduling synchronously / asynchronously, across components (render scheduler)
 
-Other times, we simply cannot batch updates synchronously, or we do not want to.
+In more complex situations - e.g. when we want to schedule renderings across multiple components, perhaps even across multiple state
+changes - we need to be a bit more creative. A custom scheduling solution could exist globally, allowing every component to schedule state
+changes, and then either we (synchronously) or the browser (asynchronously) will run the state changes wrapped in `unstable_batchedUpdates`.
 
-#### Use Case: Using RxJS
+> The performance analysis below explores those custom scheduling solutions, and if / how they affect performance.
 
-One use case where we cannot synchronously batch updates is when using [RxJS](https://github.com/ReactiveX/rxjs) to share and manage data
-across multiple components. Somewhere up the hierarchy, an Observable exists that emits data, and multiple components subscribe to that
-Observable to retrieve the data.
+<br><br><br>
 
-For instance:
-
-```tsx
-const [value, setValue] = useState('');
-const dataStream = useMyObservable();
-
-useEffect(() => {
-  // Update value when it changes
-  const subscription = dataStream.subscribe((newValue) => {
-    setValue(newValue);
-  });
-
-  // Cleanup
-  return () => {
-    subscription.unsubscribe();
-  };
-});
-```
-
-Now, in this example we basically opt-out of React features; we do not use a [React Context](https://reactjs.org/docs/context.html) to
-manage and distribute data across multiple components, but we instead use our own solution. Thus, React has no way of knowing how to
-optimize here. Even though the original data source (here our Observable) only emits data once - at the same time, to all components using
-it - React will re-render every single component separately.
-
-#### Render scheduler requirements
-
-The solution to this problem is a custom scheduling solution that batches up multiple render instructions (from multiple components). This
-custom scheduler
-
-- ideally exist once at a central place, and is shared across components<br>
-  → we can provide the render scheduler using a React Context, or by exporting it as a singleton from a JavaScript module
-- runs render instructions asynchronously, meaning after all synchronous component code has been executed<br>
-  → we can use [Microtasks](https://developer.mozilla.org/en-US/docs/Web/API/HTML_DOM_API/Microtask_guide) to run our render instructions
-  right after all synchronous code has been executed
-
-> We are using Microtasks here to schedule renderings as early as possible. But it's also possible to use Tasks (e.g. `setTimeout()`) or
-> even render-based queues (e.g. `requestAnimationFrame()`) for the purpose of render scheduling.
-
-<br><br>
-
-## Performance Analysis Setup
+## Performance Analysis Setup & Implementation
 
 ### Test setup
 
@@ -382,7 +363,10 @@ All the performance profiling results documented below ran on the following syst
 
 ### Test implementation
 
-Running a performance analysis test means:
+Within each test case implementation, the `start-analysis.bin.ts` script is responsible for executing the performance analysis and writing
+the results onto the disk.
+
+In particular, it follows these steps:
 
 | Step | Description                                                                 |
 | ---- | --------------------------------------------------------------------------- |
@@ -395,20 +379,79 @@ Running a performance analysis test means:
 | 6    | Close browser                                                               |
 | 7    | Close server                                                                |
 
-TOOD: Results files
-TODO: puppeteer
+> Internally, we use [Puppeteer](https://github.com/puppeteer/puppeteer) to control a browser, and use the native NodeJS server API to serve
+> the fronted to that browser.
 
 <br>
 
-### Visualize test results
+### How to run a test
 
-TODO
+To run a performance analysis on a use case, follow these steps:
 
-<br><br>
+1. Install dependencies by running `npm run install`
+2. Create a production build by running `npm run build`
+3. Run the performance analysis by running `npm run start:analysis`
 
-## Performance Analysis Results
+The script will create the following two files within the `results` folder:
 
-TODO
+- `profiler-logs.json` contains the React profiler results
+  <br>
+  The root project is a React app that offers a visualization of this file in the form of charts. Simply run `npm start` and select a
+  `profiler-logs.json` file.
+- `tracing-profile.json` contains the browser performance tracing timeline
+  <br>
+  This file can be loaded into the "Performance" tab of the Chrome Dev Tools, or can be uploaded to and viewed online using the
+  [DevTools Timeline Viewer](https://chromedevtools.github.io/timeline-viewer/)
+
+<br><br><br>
+
+## Performance Analysis
+
+### Summary
+
+#### Test parameters
+
+We are running the performance analysis with the following parameters:
+
+- We render once every second
+- We render 200 components
+- We render 30 times
+
+#### Test results (summary)
+
+The following table shows a short test summary. See further chapters for more details.
+
+| Test case                                                                                                           | Average Render time | Comparison      |
+| ------------------------------------------------------------------------------------------------------------------- | ------------------- | --------------- |
+| [No scheduling](#test-case-no-scheduling)                                                                           | 9.69ms              | 100% (baseline) |
+| [Synchronous scheduling by manual flush](#test-case-synchronous-scheduling-by-manual-flush)                         | 1.88ms              | 19.40%          |
+| [Asynchronous scheduling using Microtasks](#test-case-asynchronous-scheduling-using-microtasks)                     | 1.81ms              | 18.68%          |
+| [Asynchronous scheduling using Macrotasks](##test-case-asynchronous-scheduling-using-macrotasks)                    | 1.84ms              | 18.99%          |
+| [Asynchronous scheduling using based on render cycle](#test-case-asynchronous-scheduling-based-on-the-render-cycle) | 1.84ms              | 18.99%          |
+| [Concurrent Mode (experimental!)](#bonus-concurrent-mode-experimental)                                              | 1.85ms              | 19.09%          |
+
+#### Interpretation of results
+
+- Using scheduling (either manually or by switching to Concurrent Mode) generally improves render speeds by a factor of 5.
+- There is not identifyable difference between different render scheduler mechanisms in regards to the render speed. Thus, the decision on
+  which scheduling technique to use just depends on the specific use case. Different scheduling mechanisms may even be combined if useful.
+
+#### Recommendations
+
+- **Concurrent Mode is not yet ready**
+  <br>
+  Ideally, we want to use features that come with React itself. But as the React Concurrent Mode is still very experimental and requires the
+  App to be stict-mode compatible (which many popular and widely used React libraries are still not yet), it's not a solution for most
+  apps and people (except maybe for people like me who like to live on the edge and break things all the freakin' time).
+- **Synchronous scheduling is doable but not easy**
+  <br>
+  [Synchronous scheduling by manual flush](#test-case-synchronous-scheduling-by-manual-flush) comes the closest to
+  [not using scheduling](#test-case-no-scheduling), but it requires us to handle the flush by ourselves, probably at the place where state
+  gets managed - seems that this is not the best idea from an architecture point of view?
+- **Asynchronous scheduling is the easiest solution**
+  <br>
+  [Asynchronous scheduling using Microtasks](#test-case-asynchronous-scheduling-using-microtasks) is probably the easiest and most stable
+  solution. Other asynchronous scheduling techniques may be used depending on the specific use case.
 
 <br>
 
@@ -440,9 +483,11 @@ common frame budget (_16.66ms_).
 
 ![Profiler Results - Render durations](./docs/results-2020-05-04/default/profiler-logs-render-durations.png)
 
-Tracing:
+#### Tracing
 
-TODO
+Wow, that is one busy tracing profile! We can see lots of fragmentation, the lower parts representing the function calls of React re-rendering components separately.
+
+![Tracing Profile](./docs/results-2020-05-04/default/tracing-profile.png)
 
 <br>
 
@@ -471,9 +516,11 @@ component re-render time of _0.01ms_.
 
 ![Profiler Results - Update durations](./docs/results-2020-05-04/scheduler-sync/profiler-logs-render-durations.png)
 
-Tracing:
+#### Tracing
 
-TODO
+This tracing profile looks very clean, very few function calls compared to the not-scheduled test case.Everything is executed within one synchronous block of code, even scheduled renderings.
+
+![Tracing Profile](./docs/results-2020-05-04/scheduler-sync/tracing-profile.png)
 
 <br>
 
@@ -516,9 +563,11 @@ component re-render time of _0.01ms_.
 
 ![Profiler Results - Update durations](./docs/results-2020-05-04/scheduler-microtask/profiler-logs-render-durations.png)
 
-Tracing:
+#### Tracing
 
-TODO
+This tracing profile looks very clean, very few function calls compared to the not-scheduled test case. Everything is executed within the same Macrotask, the first synchronous block containing the state change and its propagation to the components, the second Microtask block being the execution of all scheduled renderings right after.
+
+![Tracing Profile](./docs/results-2020-05-04/scheduler-microtask/tracing-profile.png)
 
 <br>
 
@@ -554,9 +603,11 @@ component re-render time of _0.01ms_.
 
 ![Profiler Results - Update durations](./docs/results-2020-05-04/scheduler-macrotask/profiler-logs-render-durations.png)
 
-Tracing:
+#### Tracing
 
-TODO
+This tracing profile looks very clean, very few function calls compared to the not-scheduled test case. The first Macrotask contains the state change and its propagation to the components, the second Macrotask runs all scheduled renderings. We can also clearly see how the browser decided to render a frame in between, which might happen when using Macrotasks for scheduling purposes.
+
+![Tracing Profile](./docs/results-2020-05-04/scheduler-macrotask/tracing-profile.png)
 
 <br>
 
@@ -591,9 +642,11 @@ component re-render time of _0.01ms_.
 
 ![Profiler Results - Update durations](./docs/results-2020-05-04/scheduler-render-cycle/profiler-logs-render-durations.png)
 
-Tracing:
+#### Tracing
 
-TODO
+This tracing profile looks very clean, very few function calls compared to the not-scheduled test case. The first Macrotask contains the state change and its propagation to the components, the second block runs all scheduled renderings right before the browser renders on screen.
+
+![Tracing Profile](./docs/results-2020-05-04/scheduler-render-cycle/tracing-profile.png)
 
 <br>
 
@@ -619,6 +672,8 @@ component re-render time of _0.01ms_.
 
 ![Profiler Results - Update durations](./docs/results-2020-05-04/concurrent-mode/profiler-logs-update-durations.png)
 
-Tracing:
+#### Tracing
 
-TODO
+This tracing profile looks very clean, very few function calls compared to the not-scheduled test case. The first Macrotask contains the state change and its propagation to the components. It seems that the React Concurrent Mode decided to schedule re-renderings into a separate Macrotask, using `setTimeout(callbackFn, 0)` - interesting!
+
+![Tracing Profile](./docs/results-2020-05-04/concurrent-mode/tracing-profile.png)
