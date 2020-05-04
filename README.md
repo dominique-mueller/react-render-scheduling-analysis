@@ -333,105 +333,6 @@ custom scheduler
 > We are using Microtasks here to schedule renderings as early as possible. But it's also possible to use Tasks (e.g. `setTimeout()`) or
 > even render-based queues (e.g. `requestAnimationFrame()`) for the purpose of render scheduling.
 
-#### An exemplary render scheduler using Microtasks and `unstable_batchedUpdates`
-
-The following is an example implementation of such a render scheduler. Using the `scheduleTask()` function, components can wrap their state-
-changing code similar to just using `unstable_batchedUpdates`. The render scheduler will remember all those tasks, and queue (scheduling) a
-microtask. Once the browser has executed all synchronous code and continues to run all queued microtasks, it will pick up the render
-scheduler microtask which will then execute all remembered tasks, wrapped within a unstable_batchedUpdates` function.
-
-Render scheduler:
-
-```ts
-import { unstable_batchedUpdates as batchedUpdates } from 'react-dom';
-
-/**
- * Render Scheduler
- */
-export class RenderScheduler {
-  /**
-   * List of scheduled tasks
-   */
-  private scheduledTasks: Array<Function>;
-
-  /**
-   * Flag, describing whether the next render has already been scheduled
-   */
-  private isNextRenderScheduled: boolean;
-
-  /**
-   * Constructor
-   */
-  constructor() {
-    this.scheduledTasks = [];
-    this.isNextRenderScheduled = false;
-  }
-
-  /**
-   * Schedule a new task
-   *
-   * @param task Task
-   */
-  public scheduleTask(task: Function): void {
-    // Schedule the task
-    this.scheduledTasks.push(task);
-
-    // Schedule the next render (if not yet done)
-    if (!this.isNextRenderScheduled) {
-      this.scheduleTaskExecution();
-    }
-  }
-
-  /**
-   * Schedule task execution
-   */
-  private async scheduleTaskExecution(): Promise<void> {
-    // Mark next render as scheduled
-    this.isNextRenderScheduled = true;
-
-    // Wait until next opportunity to render
-    queueMicrotask((): void => {
-      // Unmark next render as scheduled
-      this.isNextRenderScheduled = false;
-
-      // Get tasks to be applied
-      const scheduledTasksToBeApplied: Array<Function> = this.scheduledTasks;
-      this.scheduledTasks = [];
-
-      // Run all tasks batched (and in correct order)
-      batchedUpdates((): void => {
-        for (let i = 0; i < scheduledTasksToBeApplied.length; i++) {
-          scheduledTasksToBeApplied[i]();
-        }
-      });
-    });
-  }
-}
-```
-
-Assuming the `RenderScheduler` above has been instantiated in a Context and gets provided via the `useRenderScheduler()` hook, components
-can now schedule render tasks the following way:
-
-```diff
-  const [value, setValue] = useState('');
-  const dataStream = useMyObservable();
-+ const renderScheduler = useRenderScheduler();
-
-  useEffect(() => {
-    // Update value when it changes
-    const subscription = dataStream.subscribe((newValue) => {
-+     renderScheduler.scheduleTask(() => {
-        setValue(newValue);
-+     });
-    });
-
-    // Cleanup
-    return () => {
-      subscription.unsubscribe();
-    };
-  });
-```
-
 <br><br>
 
 ## Performance Analysis Setup
@@ -507,21 +408,35 @@ TODO
 
 ## Performance Analysis Results
 
-### Without scheduling
-
 TODO
 
-#### Results
+<br>
 
-Timeline:
+### Test case: No scheduling
+
+This test case shows how performance takes a hit when state is managed and propagated to components outside of scopes known to React, here
+by [RxJS](https://github.com/ReactiveX/rxjs) observables. React will re-render each component separately.
+
+The test results of this scenario represent the baseline for any further performance improvements.
+
+#### Timeline
+
+The following chart shows how each state change leads a render step (re-rendering all components) that consists of multiple updates
+(re-rendering one component).
 
 ![Profiler Results - Timeline](./docs/results-2020-05-04/default/profiler-logs-timeline.png)
 
-Update durations:
+#### Update durations (one component)
+
+A single update (one component re-renders) is very quick (about 0.05ms).
 
 ![Profiler Results - Update durations](./docs/results-2020-05-04/default/profiler-logs-update-durations.png)
 
-Render durations:
+#### Render durations (all components)
+
+Although each single update (one component re-renders) is very quick, running all those updates separetely - with React being unable to
+optimize across those updates - takes time. On average, we are talking about _9.5ms_ to _10ms_, which is way too much when considering a
+common frame budget (_16.66ms_).
 
 ![Profiler Results - Render durations](./docs/results-2020-05-04/default/profiler-logs-render-durations.png)
 
@@ -531,23 +446,30 @@ TODO
 
 <br>
 
-### Synchronous scheduling by manual flush
+### Test case: Synchronous scheduling by manual flush
 
-TODO
+In this test case, we schedule state changes instead of executing them right away, and then flush them manually (batched up) once all state
+changes are propagated to components. In particular, we flush all tasks after every observable subscriber has processed the new value.
 
-#### Results
+> Implementation pointers:
+>
+> - [Render scheduler](https://github.com/dominique-mueller/react-scheduling-experiment/blob/master/packages/scheduler-sync/src/RenderScheduler.ts#L6)
+> - [Scheduling tasks](https://github.com/dominique-mueller/react-scheduling-experiment/blob/master/packages/scheduler-sync/src/EventBox.tsx#L29)
+> - [Flushing tasks synchronously](https://github.com/dominique-mueller/react-scheduling-experiment/blob/master/packages/scheduler-sync/src/event-stream.ts#L63)
 
-Timeline:
+#### Timeline
+
+The following chart shows that now each render step (re-rendering all components) contains only one update that now re-renders all
+components at once instead of separately.
 
 ![Profiler Results - Timeline](./docs/results-2020-05-04/scheduler-sync/profiler-logs-timeline.png)
 
-Update durations:
+#### Update & render durations (all components)
 
-![Profiler Results - Update durations](./docs/results-2020-05-04/scheduler-sync/profiler-logs-update-durations.png)
+A single update equals a single render. On average, all component re-render at _1.8ms_ to _1.9ms_ time, which breaks down to a theoratical
+component re-render time of _0.01ms_.
 
-Render durations:
-
-![Profiler Results - Render durations](./docs/results-2020-05-04/scheduler-sync/profiler-logs-render-durations.png)
+![Profiler Results - Update durations](./docs/results-2020-05-04/scheduler-sync/profiler-logs-render-durations.png)
 
 Tracing:
 
@@ -555,23 +477,44 @@ TODO
 
 <br>
 
-### Asynchronous scheduling using Microtasks
+### Test case: Asynchronous scheduling using Microtasks
 
-TODO
+In this test case, we schedule state changes instead of executing them right away in the form of Microtasks, meaning that the browser will
+automatically flush all tasks once the currently running synchronous code has been completed and previsouly scheduled Microtasks have been
+executed.
 
-#### Results
+In order to schedule a Microtask, we use the
+[`queueMicrotask()`](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/queueMicrotask) API:
 
-Timeline:
+```ts
+queueMicrotask(callbackFn);
+```
+
+As a fallback / polyfill (e.g. for older browsers), we could also use
+[Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/resolve) to schedule a Microtask:
+
+```ts
+Promise.resolve().then(callbackFn);
+```
+
+> Implementation pointers:
+>
+> - [Render scheduler](https://github.com/dominique-mueller/react-scheduling-experiment/blob/master/packages/scheduler-microtask/src/RenderScheduler.ts#L6)
+> - [Scheduling tasks](https://github.com/dominique-mueller/react-scheduling-experiment/blob/master/packages/scheduler-microtask/src/EventBox.tsx#L29)
+
+#### Timeline
+
+The following chart shows that now each render step (re-rendering all components) contains only one update that now re-renders all
+components at once instead of separately.
 
 ![Profiler Results - Timeline](./docs/results-2020-05-04/scheduler-microtask/profiler-logs-timeline.png)
 
-Update durations:
+#### Update & render durations (all components)
 
-![Profiler Results - Update durations](./docs/results-2020-05-04/scheduler-microtask/profiler-logs-update-durations.png)
+A single update equals a single render. On average, all component re-render at _1.8ms_ to _1.9ms_ time, which breaks down to a theoratical
+component re-render time of _0.01ms_.
 
-Render durations:
-
-![Profiler Results - Render durations](./docs/results-2020-05-04/scheduler-microtask/profiler-logs-render-durations.png)
+![Profiler Results - Update durations](./docs/results-2020-05-04/scheduler-microtask/profiler-logs-render-durations.png)
 
 Tracing:
 
@@ -579,23 +522,37 @@ TODO
 
 <br>
 
-### Asynchronous scheduling using Macrotasks
+### Test case: Asynchronous scheduling using Macrotasks
 
-TODO
+In this test case, we schedule state changes instead of executing them right away in the form of Macrotasks, meaning that the browser will
+automatically flush all tasks once the currently running synchronous code has been completed and all scheduled Microtasks have been
+executed. It's important to note that the browser might render an update on screen before our scheduled code executes.
 
-#### Results
+In order to schedule a Macrotask, we use the
+[`setTimeout()`](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setTimeout) API with a timeout of zero:
 
-Timeline:
+```ts
+setTimeout(callbackFn, 0);
+```
+
+> Implementation pointers:
+>
+> - [Render scheduler](https://github.com/dominique-mueller/react-scheduling-experiment/blob/master/packages/scheduler-macrotask/src/RenderScheduler.ts#L6)
+> - [Scheduling tasks](https://github.com/dominique-mueller/react-scheduling-experiment/blob/master/packages/scheduler-macrotask/src/EventBox.tsx#L29)
+
+#### Timeline
+
+The following chart shows that now each render step (re-rendering all components) contains only one update that now re-renders all
+components at once instead of separately.
 
 ![Profiler Results - Timeline](./docs/results-2020-05-04/scheduler-macrotask/profiler-logs-timeline.png)
 
-Update durations:
+#### Update & render durations (all components)
 
-![Profiler Results - Update durations](./docs/results-2020-05-04/scheduler-macrotask/profiler-logs-update-durations.png)
+A single update equals a single render. On average, all component re-render at _1.8ms_ to _1.9ms_ time, which breaks down to a theoratical
+component re-render time of _0.01ms_.
 
-Render durations:
-
-![Profiler Results - Render durations](./docs/results-2020-05-04/scheduler-macrotask/profiler-logs-render-durations.png)
+![Profiler Results - Update durations](./docs/results-2020-05-04/scheduler-macrotask/profiler-logs-render-durations.png)
 
 Tracing:
 
@@ -603,23 +560,36 @@ TODO
 
 <br>
 
-### Asynchronous scheduling based on the render cycle
+### Test case: Asynchronous scheduling based on the render cycle
 
-TODO
+In this test case, we schedule state changes instead of executing them right away by deffering them to the render cycle, meaning that the
+browser will automatically flush all tasks right before it renders on screen.
 
-#### Results
+In order to schedule based on the render cycle, we use the
+[`requestAnimationFrame()`](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame) API:
 
-Timeline:
+```ts
+requestAnimationFrame(callbackFn);
+```
+
+> Implementation pointers:
+>
+> - [Render scheduler](https://github.com/dominique-mueller/react-scheduling-experiment/blob/master/packages/scheduler-render-cycle/src/RenderScheduler.ts#L6)
+> - [Scheduling tasks](https://github.com/dominique-mueller/react-scheduling-experiment/blob/master/packages/scheduler-render-cycle/src/EventBox.tsx#L29)
+
+#### Timeline
+
+The following chart shows that now each render step (re-rendering all components) contains only one update that now re-renders all
+components at once instead of separately.
 
 ![Profiler Results - Timeline](./docs/results-2020-05-04/scheduler-render-cycle/profiler-logs-timeline.png)
 
-Update durations:
+#### Update & render durations (all components)
 
-![Profiler Results - Update durations](./docs/results-2020-05-04/scheduler-render-cycle/profiler-logs-update-durations.png)
+A single update equals a single render. On average, all component re-render at _1.8ms_ to _1.9ms_ time, which breaks down to a theoratical
+component re-render time of _0.01ms_.
 
-Render durations:
-
-![Profiler Results - Render durations](./docs/results-2020-05-04/scheduler-render-cycle/profiler-logs-render-durations.png)
+![Profiler Results - Update durations](./docs/results-2020-05-04/scheduler-render-cycle/profiler-logs-render-durations.png)
 
 Tracing:
 
@@ -627,23 +597,27 @@ TODO
 
 <br>
 
-### Bonus: Concurrent Mode
+### Bonus: Concurrent Mode (experimental!)
 
-TODO
+Bonus time: Let's test that fancy cool new [React concurrent mode](https://reactjs.org/docs/concurrent-mode-intro.html). Here, we don't have
+a manual scheduler in place. Instead, we use the new `ReactDOM.createRoot()` function to instantiate our application, thus enabling
+concurrent mode, and otherwhise develop our application like we are used to.
 
-#### Results
+> Note: React concurrent mode is still highly experimental, and requires the application to run properly in strict mode!
 
-Timeline:
+#### Timeline
+
+The following chart shows that now each render step (re-rendering all components) contains only one update that now re-renders all
+components at once instead of separately.
 
 ![Profiler Results - Timeline](./docs/results-2020-05-04/concurrent-mode/profiler-logs-timeline.png)
 
-Update durations:
+#### Update & render durations (all components)
+
+A single update equals a single render. On average, all component re-render at _1.8ms_ to _1.9ms_ time, which breaks down to a theoratical
+component re-render time of _0.01ms_.
 
 ![Profiler Results - Update durations](./docs/results-2020-05-04/concurrent-mode/profiler-logs-update-durations.png)
-
-Render durations:
-
-![Profiler Results - Render durations](./docs/results-2020-05-04/concurrent-mode/profiler-logs-render-durations.png)
 
 Tracing:
 
