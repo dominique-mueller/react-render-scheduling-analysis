@@ -511,15 +511,21 @@ TODO
 
 TODO
 
-#### How to run
-
-TODO
-
-#### Implementation
-
-TODO
-
 #### Results
+
+Timeline:
+
+![Profiler Results - Timeline](./docs/results-2020-05-04/default/profiler-logs-timeline.png)
+
+Update durations:
+
+![Profiler Results - Update durations](./docs/results-2020-05-04/default/profiler-logs-update-durations.png)
+
+Render durations:
+
+![Profiler Results - Render durations](./docs/results-2020-05-04/default/profiler-logs-render-durations.png)
+
+Tracing:
 
 TODO
 
@@ -529,15 +535,21 @@ TODO
 
 TODO
 
-#### How to run
-
-TODO
-
-#### Implementation
-
-TODO
-
 #### Results
+
+Timeline:
+
+![Profiler Results - Timeline](./docs/results-2020-05-04/scheduler-sync/profiler-logs-timeline.png)
+
+Update durations:
+
+![Profiler Results - Update durations](./docs/results-2020-05-04/scheduler-sync/profiler-logs-update-durations.png)
+
+Render durations:
+
+![Profiler Results - Render durations](./docs/results-2020-05-04/scheduler-sync/profiler-logs-render-durations.png)
+
+Tracing:
 
 TODO
 
@@ -547,15 +559,21 @@ TODO
 
 TODO
 
-#### How to run
-
-TODO
-
-#### Implementation
-
-TODO
-
 #### Results
+
+Timeline:
+
+![Profiler Results - Timeline](./docs/results-2020-05-04/scheduler-microtask/profiler-logs-timeline.png)
+
+Update durations:
+
+![Profiler Results - Update durations](./docs/results-2020-05-04/scheduler-microtask/profiler-logs-update-durations.png)
+
+Render durations:
+
+![Profiler Results - Render durations](./docs/results-2020-05-04/scheduler-microtask/profiler-logs-render-durations.png)
+
+Tracing:
 
 TODO
 
@@ -565,15 +583,21 @@ TODO
 
 TODO
 
-#### How to run
-
-TODO
-
-#### Implementation
-
-TODO
-
 #### Results
+
+Timeline:
+
+![Profiler Results - Timeline](./docs/results-2020-05-04/scheduler-macrotask/profiler-logs-timeline.png)
+
+Update durations:
+
+![Profiler Results - Update durations](./docs/results-2020-05-04/scheduler-macrotask/profiler-logs-update-durations.png)
+
+Render durations:
+
+![Profiler Results - Render durations](./docs/results-2020-05-04/scheduler-macrotask/profiler-logs-render-durations.png)
+
+Tracing:
 
 TODO
 
@@ -583,15 +607,21 @@ TODO
 
 TODO
 
-#### How to run
-
-TODO
-
-#### Implementation
-
-TODO
-
 #### Results
+
+Timeline:
+
+![Profiler Results - Timeline](./docs/results-2020-05-04/scheduler-render-cycle/profiler-logs-timeline.png)
+
+Update durations:
+
+![Profiler Results - Update durations](./docs/results-2020-05-04/scheduler-render-cycle/profiler-logs-update-durations.png)
+
+Render durations:
+
+![Profiler Results - Render durations](./docs/results-2020-05-04/scheduler-render-cycle/profiler-logs-render-durations.png)
+
+Tracing:
 
 TODO
 
@@ -601,14 +631,20 @@ TODO
 
 TODO
 
-#### How to run
-
-TODO
-
-#### Implementation
-
-TODO
-
 #### Results
+
+Timeline:
+
+![Profiler Results - Timeline](./docs/results-2020-05-04/concurrent-mode/profiler-logs-timeline.png)
+
+Update durations:
+
+![Profiler Results - Update durations](./docs/results-2020-05-04/concurrent-mode/profiler-logs-update-durations.png)
+
+Render durations:
+
+![Profiler Results - Render durations](./docs/results-2020-05-04/concurrent-mode/profiler-logs-render-durations.png)
+
+Tracing:
 
 TODO

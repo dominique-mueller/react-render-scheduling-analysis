@@ -39,7 +39,7 @@ const ProfilerUpdateDurationBarChart: FunctionComponent<{
       data={chartData}
       layout="vertical"
       margin={{
-        top: 20,
+        top: 10,
         right: 50,
         left: 20,
         bottom: 5,

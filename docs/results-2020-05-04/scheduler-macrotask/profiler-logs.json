@@ -1,0 +1,242 @@
+[
+  {
+    "timestamp": "2020-05-04T09:45:24.577Z",
+    "execution": 0,
+    "actualDuration": 5.66,
+    "baseDuration": 4.8,
+    "startTime": 11251.32,
+    "commitTime": 11258.99
+  },
+  {
+    "timestamp": "2020-05-04T09:45:25.567Z",
+    "execution": 1,
+    "actualDuration": 4.33,
+    "baseDuration": 3.9,
+    "startTime": 12242.16,
+    "commitTime": 12249.41
+  },
+  {
+    "timestamp": "2020-05-04T09:45:26.565Z",
+    "execution": 2,
+    "actualDuration": 4.05,
+    "baseDuration": 3.88,
+    "startTime": 13242.24,
+    "commitTime": 13247.24
+  },
+  {
+    "timestamp": "2020-05-04T09:45:27.567Z",
+    "execution": 3,
+    "actualDuration": 5.08,
+    "baseDuration": 4,
+    "startTime": 14243.63,
+    "commitTime": 14249.42
+  },
+  {
+    "timestamp": "2020-05-04T09:45:28.566Z",
+    "execution": 4,
+    "actualDuration": 5.02,
+    "baseDuration": 5.12,
+    "startTime": 15242.37,
+    "commitTime": 15248.22
+  },
+  {
+    "timestamp": "2020-05-04T09:45:29.565Z",
+    "execution": 5,
+    "actualDuration": 4.94,
+    "baseDuration": 5.07,
+    "startTime": 16241.79,
+    "commitTime": 16247.43
+  },
+  {
+    "timestamp": "2020-05-04T09:45:30.565Z",
+    "execution": 6,
+    "actualDuration": 2.32,
+    "baseDuration": 2.61,
+    "startTime": 17242.45,
+    "commitTime": 17247.06
+  },
+  {
+    "timestamp": "2020-05-04T09:45:31.564Z",
+    "execution": 7,
+    "actualDuration": 1.88,
+    "baseDuration": 2.19,
+    "startTime": 18243.44,
+    "commitTime": 18245.76
+  },
+  {
+    "timestamp": "2020-05-04T09:45:32.566Z",
+    "execution": 8,
+    "actualDuration": 3.07,
+    "baseDuration": 3.33,
+    "startTime": 19243.21,
+    "commitTime": 19246.69
+  },
+  {
+    "timestamp": "2020-05-04T09:45:33.564Z",
+    "execution": 9,
+    "actualDuration": 3.12,
+    "baseDuration": 1.51,
+    "startTime": 20242.43,
+    "commitTime": 20246.1
+  },
+  {
+    "timestamp": "2020-05-04T09:45:34.561Z",
+    "execution": 10,
+    "actualDuration": 0.84,
+    "baseDuration": 1.25,
+    "startTime": 21242.19,
+    "commitTime": 21243.52
+  },
+  {
+    "timestamp": "2020-05-04T09:45:35.561Z",
+    "execution": 11,
+    "actualDuration": 0.74,
+    "baseDuration": 1.22,
+    "startTime": 22242.36,
+    "commitTime": 22243.53
+  },
+  {
+    "timestamp": "2020-05-04T09:45:36.561Z",
+    "execution": 12,
+    "actualDuration": 0.7,
+    "baseDuration": 1.21,
+    "startTime": 23242.36,
+    "commitTime": 23243.47
+  },
+  {
+    "timestamp": "2020-05-04T09:45:37.565Z",
+    "execution": 13,
+    "actualDuration": 1.02,
+    "baseDuration": 1.42,
+    "startTime": 24243.34,
+    "commitTime": 24246.86
+  },
+  {
+    "timestamp": "2020-05-04T09:45:38.562Z",
+    "execution": 14,
+    "actualDuration": 2.07,
+    "baseDuration": 2.54,
+    "startTime": 25241.83,
+    "commitTime": 25244.28
+  },
+  {
+    "timestamp": "2020-05-04T09:45:39.561Z",
+    "execution": 15,
+    "actualDuration": 1.1,
+    "baseDuration": 1.16,
+    "startTime": 26242.01,
+    "commitTime": 26243.58
+  },
+  {
+    "timestamp": "2020-05-04T09:45:40.562Z",
+    "execution": 16,
+    "actualDuration": 1.57,
+    "baseDuration": 2.01,
+    "startTime": 27242.27,
+    "commitTime": 27244.21
+  },
+  {
+    "timestamp": "2020-05-04T09:45:41.561Z",
+    "execution": 17,
+    "actualDuration": 0.83,
+    "baseDuration": 1.3,
+    "startTime": 28241.8,
+    "commitTime": 28243.13
+  },
+  {
+    "timestamp": "2020-05-04T09:45:42.561Z",
+    "execution": 18,
+    "actualDuration": 0.64,
+    "baseDuration": 1.12,
+    "startTime": 29242.11,
+    "commitTime": 29243.13
+  },
+  {
+    "timestamp": "2020-05-04T09:45:43.560Z",
+    "execution": 19,
+    "actualDuration": 0.64,
+    "baseDuration": 1.16,
+    "startTime": 30241.78,
+    "commitTime": 30242.84
+  },
+  {
+    "timestamp": "2020-05-04T09:45:44.561Z",
+    "execution": 20,
+    "actualDuration": 0.67,
+    "baseDuration": 1.17,
+    "startTime": 31242.38,
+    "commitTime": 31243.52
+  },
+  {
+    "timestamp": "2020-05-04T09:45:45.562Z",
+    "execution": 21,
+    "actualDuration": 0.69,
+    "baseDuration": 1.21,
+    "startTime": 32243.87,
+    "commitTime": 32244.86
+  },
+  {
+    "timestamp": "2020-05-04T09:45:46.562Z",
+    "execution": 22,
+    "actualDuration": 0.68,
+    "baseDuration": 1.18,
+    "startTime": 33243.42,
+    "commitTime": 33244.61
+  },
+  {
+    "timestamp": "2020-05-04T09:45:47.562Z",
+    "execution": 23,
+    "actualDuration": 1.3,
+    "baseDuration": 1.75,
+    "startTime": 34242.34,
+    "commitTime": 34244.04
+  },
+  {
+    "timestamp": "2020-05-04T09:45:48.561Z",
+    "execution": 24,
+    "actualDuration": 0.57,
+    "baseDuration": 1.02,
+    "startTime": 35242.04,
+    "commitTime": 35243.02
+  },
+  {
+    "timestamp": "2020-05-04T09:45:49.559Z",
+    "execution": 25,
+    "actualDuration": 0.62,
+    "baseDuration": 1.11,
+    "startTime": 36240.8,
+    "commitTime": 36241.77
+  },
+  {
+    "timestamp": "2020-05-04T09:45:50.560Z",
+    "execution": 26,
+    "actualDuration": 0.57,
+    "baseDuration": 1.04,
+    "startTime": 37241.3,
+    "commitTime": 37242.25
+  },
+  {
+    "timestamp": "2020-05-04T09:45:51.561Z",
+    "execution": 27,
+    "actualDuration": 0.92,
+    "baseDuration": 1.37,
+    "startTime": 38242.28,
+    "commitTime": 38243.63
+  },
+  {
+    "timestamp": "2020-05-04T09:45:52.561Z",
+    "execution": 28,
+    "actualDuration": 0.6,
+    "baseDuration": 1.08,
+    "startTime": 39242.3,
+    "commitTime": 39243.29
+  },
+  {
+    "timestamp": "2020-05-04T09:45:53.569Z",
+    "execution": 29,
+    "actualDuration": 0.51,
+    "baseDuration": 0.99,
+    "startTime": 40250.61,
+    "commitTime": 40251.52
+  }
+]
