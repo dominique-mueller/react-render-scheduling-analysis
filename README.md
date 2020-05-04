@@ -434,30 +434,181 @@ can now schedule render tasks the following way:
 
 <br><br>
 
-## Performance Analysis
+## Performance Analysis Setup
+
+### Test setup
+
+Of course, we want to get meaningful and consistent results when performance analysis each use case implementation. The following has been
+done to ensure this:
+
+- **All use case implementations are completely separated from each other.**
+  <br>
+  Sure, it's a lot of duplicate code and tons of storage used by `node_modules` folders, but it keeps things clean. In particular:
+  - Each use case implementation exists within a separete folder, and no code gets shared between use cases. This way, we can ensure that
+    the implementation is kept to the absolute minimum, e.g. only the relevant scheduler, no unnecessary logic or "pages".
+  - Each use case defines and installs its own dependencies, and thus has its own `node_modules` folder. This way, we can easily run our
+    performance analysis tests using different dependencies per use case, e.g. using a newer / experimental version of React.
+- **Performance analysis happens on a production build of the application.**
+  <br>
+  That's the version our users will see, so that's the version we should test. In particular:
+  - Production builds might perform better (or at least different) than development builds due things like tree shaking, dead code
+    elimination and minification.
+  - React itself actually does additional things in development mode that do affect performance, e.g.
+    [running additional checks or showing development warnings](https://reactjs.org/docs/optimizing-performance.html#use-the-production-build).
+- **Performance analysis happens with the exact same clean browser.**
+  <br>
+  Let's keep variations to a minimum. In particular:
+  - We use the exact same version of Chrome for all tests, ensuring consistent results.
+  - We use a clean version of Chrome so that things like user profiles, settings or extensions / plugins don't affect the results.
+
+While all this certainly helps getting solid test results, there will always be things out of our control, such as:
+
+- Browser stuff (e.g. garbage collection, any internal delays)
+- Software stuff (Windows, software running in the background)
+- Hardware stuff (CPU, GPU, RAM, storage)
+
+All the performance profiling results documented below ran on the following system:
+
+| Area             | Details                                               |
+| ---------------- | ----------------------------------------------------- |
+| CPU              | Intel Core i7 8700K 6x 3.70Ghz                        |
+| RAM              | 32GB DDR4-3200 DIMM CL16                              |
+| GPU              | NVIDIA GeForce GTX 1070 8GB                           |
+| Storage          | System: 512GB NVMe M.2 SSD, Project: 2TB 7.200rpm HDD |
+| Operating System | Windows 10 Pro, Version 1909, Build 18363.778         |
+
+<br>
+
+### Test implementation
+
+Running a performance analysis test means:
+
+| Step | Description                                                                 |
+| ---- | --------------------------------------------------------------------------- |
+| 1    | Start the server that serves the frontend application build locally         |
+| 2    | Start the browser, and navigate to the URL serving the frontend application |
+| 3    | Start the browser performance profiler recording                            |
+| -    | Wait for the test to finish                                                 |
+| 4    | Stop the browser performance profiler recording                             |
+| 5    | Write results to disk                                                       |
+| 6    | Close browser                                                               |
+| 7    | Close server                                                                |
+
+TOOD: Results files
+TODO: puppeteer
+
+<br>
+
+### Visualize test results
 
 TODO
 
-Testing environment:
+<br><br>
 
-- TODO
+## Performance Analysis Results
 
 ### Without scheduling
 
 TODO
 
-### Scheduling with Microtasks
+#### How to run
 
 TODO
 
-### Scheduling with Macrotasks
+#### Implementation
 
 TODO
 
-### Scheduling by Render Cycle
+#### Results
 
 TODO
+
+<br>
+
+### Synchronous scheduling by manual flush
+
+TODO
+
+#### How to run
+
+TODO
+
+#### Implementation
+
+TODO
+
+#### Results
+
+TODO
+
+<br>
+
+### Asynchronous scheduling using Microtasks
+
+TODO
+
+#### How to run
+
+TODO
+
+#### Implementation
+
+TODO
+
+#### Results
+
+TODO
+
+<br>
+
+### Asynchronous scheduling using Macrotasks
+
+TODO
+
+#### How to run
+
+TODO
+
+#### Implementation
+
+TODO
+
+#### Results
+
+TODO
+
+<br>
+
+### Asynchronous scheduling based on the render cycle
+
+TODO
+
+#### How to run
+
+TODO
+
+#### Implementation
+
+TODO
+
+#### Results
+
+TODO
+
+<br>
 
 ### Bonus: Concurrent Mode
+
+TODO
+
+#### How to run
+
+TODO
+
+#### Implementation
+
+TODO
+
+#### Results
 
 TODO
