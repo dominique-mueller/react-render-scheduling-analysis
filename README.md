@@ -1,6 +1,6 @@
 <div align="center">
 
-# react-scheduling-experiment
+# react-render-scheduling-analysis
 
 Using custom scheduling in **[React](https://github.com/facebook/react)**.
 
